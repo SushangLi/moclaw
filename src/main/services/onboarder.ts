@@ -9,7 +9,7 @@ import { runInWsl, readWslFile, writeWslFile } from './wsl-utils'
 import { t } from '../../shared/i18n/main'
 
 interface OnboardConfig {
-  provider: 'anthropic' | 'google' | 'openai' | 'minimax' | 'glm'
+  provider: 'momoai'
   apiKey?: string
   authMethod?: 'api-key' | 'oauth'
   telegramBotToken?: string
@@ -57,19 +57,12 @@ import { getPathEnv, findBin } from './path-utils'
 const OAUTH_PROFILE_ID = 'openai-codex:default'
 
 const DEFAULT_MODELS: Record<string, string> = {
-  anthropic: 'anthropic/claude-sonnet-4-6',
-  google: 'google/gemini-3-flash',
-  openai: 'openai/gpt-5.2',
-  'openai-codex': 'openai-codex/gpt-5.3-codex',
-  minimax: 'minimax/MiniMax-M2.5',
-  glm: 'zai/glm-5'
+  momoai: 'momo_222'
 }
 
 const MODEL_SPECS: Partial<
   Record<OnboardConfig['provider'], { contextWindow: number; maxTokens: number }>
-> = {
-  minimax: { contextWindow: 1000000, maxTokens: 16384 }
-}
+> = {}
 
 const createRunCmd = (): ((
   cmd: string,
@@ -229,16 +222,7 @@ export const runOnboard = async (
 
   // OAuth: credentials already saved to auth-profiles.json, skip auth in onboard
   const effectiveProvider = config.authMethod === 'oauth' ? 'openai-codex' : config.provider
-  const effectiveAuthFlags =
-    config.authMethod === 'oauth'
-      ? ['--auth-choice', 'skip']
-      : {
-          anthropic: ['--auth-choice', 'apiKey', '--anthropic-api-key', config.apiKey!],
-          google: ['--auth-choice', 'gemini-api-key', '--gemini-api-key', config.apiKey!],
-          openai: ['--auth-choice', 'openai-api-key', '--openai-api-key', config.apiKey!],
-          minimax: ['--auth-choice', 'minimax-api', '--minimax-api-key', config.apiKey!],
-          glm: ['--auth-choice', 'zai-api-key', '--zai-api-key', config.apiKey!]
-        }[config.provider]
+  const effectiveAuthFlags = config.authMethod === 'oauth' ? ['--auth-choice', 'skip'] : []
 
   const openclawArgs = [
     'onboard',
@@ -303,7 +287,36 @@ export const runOnboard = async (
     cfg.agents.defaults = cfg.agents.defaults ?? {}
     cfg.agents.defaults.model = {
       ...cfg.agents.defaults.model,
-      primary: config.modelId || DEFAULT_MODELS[effectiveProvider]
+      primary: config.modelId
+        ? `momoai/${config.modelId}`
+        : `momoai/${DEFAULT_MODELS[effectiveProvider]}`
+    }
+    // Add MomoAI base URL
+    if (effectiveProvider === 'momoai' && config.apiKey) {
+      cfg.models = cfg.models || {}
+      cfg.models.mode = 'merge'
+      cfg.models.providers = cfg.models.providers || {}
+      const modelId = config.modelId || 'momo_222'
+      const modelNames: Record<string, string> = {
+        momo_222: '花满楼的Qwen3.5 Plus',
+        momo_223: '花满楼的Deepseek V3.2',
+        momo_221: '花满楼的GLM-5',
+        momo_220: '花满楼的Minimax M2.5',
+        momo_219: '花满楼的kimi-k2.5'
+      }
+      cfg.models.providers.momoai = {
+        apiKey: config.apiKey,
+        baseUrl: 'https://hub.momoai.pro/v1',
+        api: 'openai-completions',
+        models: [
+          {
+            id: modelId,
+            name: modelNames[modelId] || modelId,
+            contextWindow: 1000000,
+            maxTokens: 16384
+          }
+        ]
+      }
     }
     // OAuth: register auth profile reference in config
     if (config.authMethod === 'oauth') {
@@ -559,16 +572,7 @@ export const switchProvider = async (
   log(t('onboarder.settingNewProvider'))
   // OAuth: credentials already saved to auth-profiles.json, skip auth in onboard
   const effectiveProvider = config.authMethod === 'oauth' ? 'openai-codex' : config.provider
-  const effectiveAuthFlags =
-    config.authMethod === 'oauth'
-      ? ['--auth-choice', 'skip']
-      : {
-          anthropic: ['--auth-choice', 'apiKey', '--anthropic-api-key', config.apiKey!],
-          google: ['--auth-choice', 'gemini-api-key', '--gemini-api-key', config.apiKey!],
-          openai: ['--auth-choice', 'openai-api-key', '--openai-api-key', config.apiKey!],
-          minimax: ['--auth-choice', 'minimax-api', '--minimax-api-key', config.apiKey!],
-          glm: ['--auth-choice', 'zai-api-key', '--zai-api-key', config.apiKey!]
-        }[config.provider]
+  const effectiveAuthFlags = config.authMethod === 'oauth' ? ['--auth-choice', 'skip'] : []
 
   const openclawArgs = [
     'onboard',
@@ -632,7 +636,36 @@ export const switchProvider = async (
     ocConfig.agents.defaults = ocConfig.agents.defaults ?? {}
     ocConfig.agents.defaults.model = {
       ...ocConfig.agents.defaults.model,
-      primary: config.modelId || DEFAULT_MODELS[effectiveProvider]
+      primary: config.modelId
+        ? `momoai/${config.modelId}`
+        : `momoai/${DEFAULT_MODELS[effectiveProvider]}`
+    }
+    // Add MomoAI base URL for switch
+    if (effectiveProvider === 'momoai' && config.apiKey) {
+      ocConfig.models = ocConfig.models || {}
+      ocConfig.models.mode = 'merge'
+      ocConfig.models.providers = ocConfig.models.providers || {}
+      const modelId = config.modelId || 'momo_222'
+      const modelNames: Record<string, string> = {
+        momo_222: '花满楼的Qwen3.5 Plus',
+        momo_223: '花满楼的Deepseek V3.2',
+        momo_221: '花满楼的GLM-5',
+        momo_220: '花满楼的Minimax M2.5',
+        momo_219: '花满楼的kimi-k2.5'
+      }
+      ocConfig.models.providers.momoai = {
+        apiKey: config.apiKey,
+        baseUrl: 'https://hub.momoai.pro/v1',
+        api: 'openai-completions',
+        models: [
+          {
+            id: modelId,
+            name: modelNames[modelId] || modelId,
+            contextWindow: 1000000,
+            maxTokens: 16384
+          }
+        ]
+      }
     }
     // OAuth: register auth profile reference in config
     if (config.authMethod === 'oauth') {

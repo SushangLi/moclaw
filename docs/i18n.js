@@ -333,7 +333,7 @@ const translations = {
 
 var SUPPORTED_LANGS = ['ko', 'en', 'ja', 'zh']
 var DEFAULT_LANG = 'ko'
-var STORAGE_KEY = 'easyclaw-lang'
+var STORAGE_KEY = 'moclaw-lang'
 var _currentLang = null
 
 function safeHtml(val) {

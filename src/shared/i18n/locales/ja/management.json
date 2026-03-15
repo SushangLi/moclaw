@@ -74,6 +74,8 @@
     "restartNow": "今すぐ再起動"
   },
   "logViewer": {
-    "waiting": "待機中..."
+    "waiting": "待機中...",
+    "copy": "コピー",
+    "copied": "コピーしました!"
   }
 }

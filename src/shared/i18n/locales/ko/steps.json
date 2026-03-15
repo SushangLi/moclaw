@@ -44,7 +44,7 @@
     "wslInstalling": "WSL 설치 중...",
     "wslInstall": "WSL 설치",
     "rebootRequired": "재부팅이 필요합니다",
-    "rebootDesc": "WSL 설치를 완료하려면 컴퓨터를 재부팅해야 합니다. 재부팅 후 EasyClaw를 다시 실행해 주세요.",
+    "rebootDesc": "WSL 설치를 완료하려면 컴퓨터를 재부팅해야 합니다. 재부팅 후 MoClaw를 다시 실행해 주세요.",
     "rebootNow": "지금 재부팅",
     "ubuntuInstallDesc": "Ubuntu 배포판을 설치합니다.",
     "ubuntuInstalling": "Ubuntu 설치 중...",
@@ -109,7 +109,7 @@
       },
       {
         "title": "봇 유저네임 정하기",
-        "desc": "_bot으로 끝나는 고유 ID를 입력하세요. 예: my_easyclaw_bot"
+        "desc": "_bot으로 끝나는 고유 ID를 입력하세요. 예: my_moclaw_bot"
       },
       {
         "title": "봇 토큰 복사",

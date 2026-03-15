@@ -44,7 +44,7 @@
     "wslInstalling": "WSLをインストール中...",
     "wslInstall": "WSLインストール",
     "rebootRequired": "再起動が必要です",
-    "rebootDesc": "WSLのインストールを完了するには、コンピューターを再起動する必要があります。再起動後、EasyClawを再度起動してください。",
+    "rebootDesc": "WSLのインストールを完了するには、コンピューターを再起動する必要があります。再起動後、MoClawを再度起動してください。",
     "rebootNow": "今すぐ再起動",
     "ubuntuInstallDesc": "Ubuntuディストリビューションをインストールします。",
     "ubuntuInstalling": "Ubuntuをインストール中...",
@@ -109,7 +109,7 @@
       },
       {
         "title": "ボットのユーザー名を決定",
-        "desc": "_botで終わる一意のIDを入力してください。例: my_easyclaw_bot"
+        "desc": "_botで終わる一意のIDを入力してください。例: my_moclaw_bot"
       },
       {
         "title": "ボットトークンをコピー",

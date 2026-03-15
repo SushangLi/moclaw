@@ -344,27 +344,20 @@ export default function DoneStep({
         </div>
       )}
 
-      {/* ─── Star + KakaoTalk chat banner ─── */}
-      <div className="w-full max-w-md grid grid-cols-2 gap-2">
+      {/* ─── Explore Agents banner ─── */}
+      <div className="w-full max-w-md">
         <button
-          onClick={() => window.open('https://github.com/ybgwon96/easyclaw', '_blank')}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl cursor-pointer bg-white/5 border border-glass-border hover:border-primary/40 hover:bg-white/8 transition-all duration-200"
+          onClick={() => window.open('https://hub.momoai.pro', '_blank')}
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl cursor-pointer bg-white/5 border border-glass-border hover:border-primary/40 hover:bg-white/8 transition-all duration-200"
         >
-          <span className="text-lg">⭐</span>
+          <img src="../../../build/icon.png" alt="" className="w-7 h-7 rounded-lg" />
           <div className="flex-1 text-left">
-            <span className="text-sm font-bold">Star on GitHub</span>
-            <p className="text-[11px] text-text-muted/70">{t('done.starDesc')}</p>
+            <span className="text-sm font-bold">Explore Agents</span>
+            <p className="text-[11px] text-text-muted/70">
+              Find more powerful agents at hub.momoai.pro!
+            </p>
           </div>
-        </button>
-        <button
-          onClick={() => window.open('https://open.kakao.com/o/gbBkPehi', '_blank')}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl cursor-pointer bg-white/5 border border-glass-border hover:border-primary/40 hover:bg-white/8 transition-all duration-200"
-        >
-          <span className="text-lg">💬</span>
-          <div className="flex-1 text-left">
-            <span className="text-sm font-bold">{t('done.kakaoChat')}</span>
-            <p className="text-[11px] text-text-muted/70">{t('done.kakaoChatDesc')}</p>
-          </div>
+          <span className="text-lg">→</span>
         </button>
       </div>
 

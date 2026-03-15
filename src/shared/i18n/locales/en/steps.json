@@ -44,7 +44,7 @@
     "wslInstalling": "Installing WSL...",
     "wslInstall": "Install WSL",
     "rebootRequired": "Reboot Required",
-    "rebootDesc": "A reboot is required to complete the WSL installation. Please restart EasyClaw after rebooting.",
+    "rebootDesc": "A reboot is required to complete the WSL installation. Please restart MoClaw after rebooting.",
     "rebootNow": "Reboot Now",
     "ubuntuInstallDesc": "Installing the Ubuntu distribution.",
     "ubuntuInstalling": "Installing Ubuntu...",
@@ -109,7 +109,7 @@
       },
       {
         "title": "Choose Bot Username",
-        "desc": "Enter a unique ID ending with _bot. Example: my_easyclaw_bot"
+        "desc": "Enter a unique ID ending with _bot. Example: my_moclaw_bot"
       },
       {
         "title": "Copy Bot Token",

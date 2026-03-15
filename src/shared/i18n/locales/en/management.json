@@ -74,6 +74,8 @@
     "restartNow": "Restart Now"
   },
   "logViewer": {
-    "waiting": "Waiting..."
+    "waiting": "Waiting...",
+    "copy": "Copy",
+    "copied": "Copied!"
   }
 }

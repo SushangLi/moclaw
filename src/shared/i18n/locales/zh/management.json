@@ -74,6 +74,8 @@
     "restartNow": "立即重启"
   },
   "logViewer": {
-    "waiting": "等待中..."
+    "waiting": "等待中...",
+    "copy": "复制",
+    "copied": "已复制!"
   }
 }

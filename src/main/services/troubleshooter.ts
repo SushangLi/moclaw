@@ -20,18 +20,30 @@ const exec = (
 
 export const checkPort = async (port = 18789): Promise<{ inUse: boolean; pid?: string }> => {
   const isWin = platform() === 'win32'
-  // On Windows, check port via host OS netstat (WSL localhost forwarding)
-  const out = isWin
-    ? await exec('netstat', ['-ano'], process.env as NodeJS.ProcessEnv, true)
-    : await exec('lsof', ['-i', `:${port}`, '-t'], getPathEnv())
 
   if (isWin) {
-    const line = out.split('\n').find((l) => l.includes(`:${port}`) && l.includes('LISTENING'))
+    const out = await exec(
+      'wsl',
+      [
+        '-d',
+        'Ubuntu',
+        '-u',
+        'root',
+        '--',
+        'bash',
+        '-lc',
+        `ss -tlnp | grep :${port} || netstat -tlnp | grep :${port}`
+      ],
+      process.env as NodeJS.ProcessEnv,
+      false
+    )
+    const line = out.split('\n').find((l) => l.includes(`:${port}`))
     if (!line) return { inUse: false }
-    const pid = line.trim().split(/\s+/).pop()
-    return { inUse: true, pid }
+    const match = line.match(/pid=(\d+)/)
+    return { inUse: true, pid: match?.[1] }
   }
 
+  const out = await exec('lsof', ['-i', `:${port}`, '-t'], getPathEnv())
   const pid = out.split('\n')[0]?.trim()
   return pid ? { inUse: true, pid } : { inUse: false }
 }

@@ -1,5 +1,5 @@
-appId: com.easyclaw.app
-productName: EasyClaw
+appId: com.moclaw.app
+productName: MoClaw
 directories:
   buildResources: build
 files:
@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 win:
   icon: build/icon.ico
-  executableName: EasyClaw
+  executableName: MoClaw
   forceCodeSigning: false
   requestedExecutionLevel: asInvoker
   target:
@@ -57,6 +57,6 @@ dmg:
 publish:
   provider: github
   owner: ybgwon96
-  repo: easyclaw
+  repo: moclaw
   releaseType: release
 npmRebuild: false

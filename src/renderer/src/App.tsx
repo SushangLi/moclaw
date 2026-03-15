@@ -63,11 +63,8 @@ function App(): React.JSX.Element {
     needNode: false,
     needOpenclaw: false
   })
-  const [provider, setProvider] = useState<'anthropic' | 'google' | 'openai' | 'minimax' | 'glm'>(
-    'anthropic'
-  )
+  const provider: 'momoai' = 'momoai'
   const [modelId, setModelId] = useState<string | undefined>()
-  const [authMethod, setAuthMethod] = useState<'api-key' | 'oauth'>('api-key')
   const [botUsername, setBotUsername] = useState<string | undefined>()
   const [isWindows, setIsWindows] = useState(false)
   const [wslState, setWslState] = useState<WslState>('ready')
@@ -151,13 +148,6 @@ function App(): React.JSX.Element {
           {currentStep === 'apiKeyGuide' && (
             <ApiKeyGuideStep
               provider={provider}
-              onSelectProvider={(p) => {
-                setProvider(p)
-                setModelId(undefined)
-                setAuthMethod('api-key')
-              }}
-              authMethod={authMethod}
-              onSelectAuthMethod={setAuthMethod}
               modelId={modelId}
               onSelectModel={setModelId}
               onNext={next}
@@ -165,12 +155,7 @@ function App(): React.JSX.Element {
           )}
           {currentStep === 'telegramGuide' && <TelegramGuideStep onNext={next} />}
           {currentStep === 'config' && (
-            <ConfigStep
-              provider={provider}
-              authMethod={authMethod}
-              modelId={modelId}
-              onDone={handleDone}
-            />
+            <ConfigStep provider={provider} modelId={modelId} onDone={handleDone} />
           )}
           {currentStep === 'done' && (
             <DoneStep

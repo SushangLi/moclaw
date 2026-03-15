@@ -44,7 +44,7 @@
     "wslInstalling": "正在安装 WSL...",
     "wslInstall": "安装 WSL",
     "rebootRequired": "需要重启",
-    "rebootDesc": "要完成 WSL 安装，需要重启计算机。重启后请重新运行 EasyClaw。",
+    "rebootDesc": "要完成 WSL 安装，需要重启计算机。重启后请重新运行 MoClaw。",
     "rebootNow": "立即重启",
     "ubuntuInstallDesc": "安装 Ubuntu 发行版。",
     "ubuntuInstalling": "正在安装 Ubuntu...",
@@ -74,8 +74,8 @@
     "nextBtn": "下一步"
   },
   "apiKeyGuide": {
-    "title": "选择 AI 提供商",
-    "desc": "选择要使用的 AI 提供商并获取 API 密钥",
+    "title": "选择智能体",
+    "desc": "选择要使用的MOMO AI智能体并获取API密钥",
     "modelSelect": "选择模型",
     "getApiKey": {
       "google": "在 AI Studio 获取 API 密钥",
@@ -109,7 +109,7 @@
       },
       {
         "title": "设置机器人用户名",
-        "desc": "输入以 _bot 结尾的唯一 ID。例如：my_easyclaw_bot"
+        "desc": "输入以 _bot 结尾的唯一 ID。例如：my_moclaw_bot"
       },
       {
         "title": "复制机器人令牌",
@@ -130,6 +130,7 @@
       "glm": "Z.AI API 密钥"
     },
     "required": "必填",
+    "optional": "可选",
     "telegramToken": "Telegram Bot Token",
     "telegramHint": "正确格式：123456:ABCDEF...",
     "errorOccurred": "配置过程中发生错误",

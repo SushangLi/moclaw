@@ -171,7 +171,7 @@ export const registerIpcHandlers = (getWin: () => BrowserWindow | null): void =>
     async (
       _e,
       config: {
-        provider: 'anthropic' | 'google' | 'openai' | 'minimax' | 'glm'
+        provider: 'momoai'
         apiKey?: string
         authMethod?: 'api-key' | 'oauth'
         telegramBotToken?: string
@@ -218,7 +218,7 @@ export const registerIpcHandlers = (getWin: () => BrowserWindow | null): void =>
     async (
       _e,
       config: {
-        provider: 'anthropic' | 'google' | 'openai' | 'minimax' | 'glm'
+        provider: 'momoai'
         apiKey?: string
         authMethod?: 'api-key' | 'oauth'
         modelId?: string
@@ -285,7 +285,7 @@ export const registerIpcHandlers = (getWin: () => BrowserWindow | null): void =>
 
   ipcMain.handle('newsletter:subscribe', async (_e, email: string) => {
     try {
-      const r = await fetch('https://easyclaw.kr/api/newsletter', {
+      const r = await fetch('https://moclaw.kr/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, source: 'app' })
