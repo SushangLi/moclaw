@@ -2,7 +2,7 @@
   <img src="resources/icon.png" width="120" alt="EasyClaw Logo">
 </p>
 
-<h1 align="center">EasyClaw</h1>
+<h1 align="center">MoClaw</h1>
 
 <p align="center">
   <strong>One-click installer for OpenClaw AI agent</strong>
