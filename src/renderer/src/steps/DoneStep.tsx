@@ -28,6 +28,8 @@ export default function DoneStep({
   const [autoLaunch, setAutoLaunch] = useState(false)
   const [currentModel, setCurrentModel] = useState<string | null>(null)
   const [currentProvider, setCurrentProvider] = useState<string | undefined>()
+  const [hasTelegram, setHasTelegram] = useState(false)
+  const [hasFeishu, setHasFeishu] = useState(false)
   const [showProviderModal, setShowProviderModal] = useState(false)
 
   // OpenClaw update state
@@ -109,6 +111,8 @@ export default function DoneStep({
       if (r.success && r.config) {
         setCurrentModel(r.config.model || null)
         setCurrentProvider(r.config.provider)
+        setHasTelegram(!!r.config.hasTelegram)
+        setHasFeishu(!!r.config.hasFeishu)
       }
     })
   }, [])
@@ -302,10 +306,19 @@ export default function DoneStep({
 
       {/* Action buttons */}
       <div className="flex gap-3">
-        {status === 'running' && (
+        {status === 'running' && hasFeishu && (
           <Button
             variant="primary"
             size="lg"
+            onClick={() => window.open('https://feishu.cn', '_blank')}
+          >
+            {t('done.openFeishu')}
+          </Button>
+        )}
+        {status === 'running' && hasTelegram && (
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => {
               const url = botUsername ? `tg://resolve?domain=${botUsername}` : 'tg://'
               window.open(url, '_blank')

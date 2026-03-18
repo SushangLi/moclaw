@@ -8,7 +8,7 @@ import EnvCheckStep from './steps/EnvCheckStep'
 import WslSetupStep from './steps/WslSetupStep'
 import InstallStep from './steps/InstallStep'
 import ApiKeyGuideStep from './steps/ApiKeyGuideStep'
-import TelegramGuideStep from './steps/TelegramGuideStep'
+import CloudGuideStep from './steps/CloudGuideStep'
 import ConfigStep from './steps/ConfigStep'
 import DoneStep from './steps/DoneStep'
 import TroubleshootStep from './steps/TroubleshootStep'
@@ -24,6 +24,12 @@ type WslState =
 interface InstallNeeds {
   needNode: boolean
   needOpenclaw: boolean
+}
+
+interface CloudSelections {
+  feishuEnabled: boolean
+  telegramEnabled: boolean
+  installFeishuPlugin: boolean
 }
 
 const BUBBLES = Array.from({ length: 8 }, (_, i) => ({
@@ -63,9 +69,14 @@ function App(): React.JSX.Element {
     needNode: false,
     needOpenclaw: false
   })
-  const provider: 'momoai' = 'momoai'
+  const provider = 'momoai' as const
   const [modelId, setModelId] = useState<string | undefined>()
   const [botUsername, setBotUsername] = useState<string | undefined>()
+  const [cloudSelections, setCloudSelections] = useState<CloudSelections>({
+    feishuEnabled: true,
+    telegramEnabled: false,
+    installFeishuPlugin: true
+  })
   const [isWindows, setIsWindows] = useState(false)
   const [wslState, setWslState] = useState<WslState>('ready')
   const [version, setVersion] = useState('')
@@ -153,9 +164,20 @@ function App(): React.JSX.Element {
               onNext={next}
             />
           )}
-          {currentStep === 'telegramGuide' && <TelegramGuideStep onNext={next} />}
+          {currentStep === 'cloudGuide' && (
+            <CloudGuideStep
+              selections={cloudSelections}
+              onChange={setCloudSelections}
+              onNext={next}
+            />
+          )}
           {currentStep === 'config' && (
-            <ConfigStep provider={provider} modelId={modelId} onDone={handleDone} />
+            <ConfigStep
+              provider={provider}
+              modelId={modelId}
+              cloudSelections={cloudSelections}
+              onDone={handleDone}
+            />
           )}
           {currentStep === 'done' && (
             <DoneStep

@@ -1,7 +1,7 @@
 {
   "indicator": {
-    "default": ["开始", "环境", "安装", "API密钥", "Telegram", "配置", "完成"],
-    "windows": ["开始", "环境", "WSL", "安装", "API密钥", "Telegram", "配置", "完成"]
+    "default": ["开始", "环境", "安装", "API密钥", "云端", "配置", "完成"],
+    "windows": ["开始", "环境", "WSL", "安装", "API密钥", "云端", "配置", "完成"]
   },
   "welcome": {
     "title": "专属 AI 智能体，一键搞定",
@@ -91,33 +91,26 @@
     },
     "oauthDesc": "使用 ChatGPT Plus/Pro 订阅登录"
   },
-  "telegramGuide": {
-    "title": "创建 Telegram 机器人",
-    "desc": "让我们创建一个用于与 AI 智能体对话的 Telegram 机器人",
-    "steps": [
+  "cloudGuide": {
+    "title": "选择云端渠道",
+    "desc": "选择要连接到 OpenClaw 的云端渠道",
+    "options": [
       {
-        "title": "搜索 BotFather",
-        "desc": "在 Telegram 应用中搜索 @BotFather，选择带有蓝色认证标志的官方机器人。"
+        "key": "feishu",
+        "title": "飞书",
+        "desc": "默认推荐。使用飞书应用凭证接入。"
       },
       {
-        "title": "输入 /newbot 命令",
-        "desc": "在 BotFather 对话中输入 /newbot，它会询问机器人名称。"
-      },
-      {
-        "title": "输入机器人显示名称",
-        "desc": "输入机器人的显示名称。例如：EASYCLAW"
-      },
-      {
-        "title": "设置机器人用户名",
-        "desc": "输入以 _bot 结尾的唯一 ID。例如：my_moclaw_bot"
-      },
-      {
-        "title": "复制机器人令牌",
-        "desc": "创建完成！请务必复制 123456:ABCDEF... 格式的令牌。"
+        "key": "telegram",
+        "title": "Telegram",
+        "desc": "可选。如果你已经有 Telegram Bot Token，可以一并启用。"
       }
     ],
-    "botfatherLink": "前往 BotFather ->",
-    "tokenReady": "令牌已准备好！"
+    "installFeishu": {
+      "title": "安装飞书插件",
+      "desc": "在初始化时安装 Feishu 插件。默认开启，推荐保留。"
+    },
+    "continue": "继续"
   },
   "config": {
     "title": "API 密钥配置",
@@ -131,6 +124,10 @@
     },
     "required": "必填",
     "optional": "可选",
+    "feishuAppId": "飞书 App ID",
+    "feishuAppIdHint": "正确格式：cli_xxxxx",
+    "feishuAppSecret": "飞书 App Secret",
+    "feishuAppSecretPlaceholder": "请输入飞书应用密钥",
     "telegramToken": "Telegram Bot Token",
     "telegramHint": "正确格式：123456:ABCDEF...",
     "errorOccurred": "配置过程中发生错误",

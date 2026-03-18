@@ -12,6 +12,9 @@ interface OnboardConfig {
   provider: 'momoai'
   apiKey?: string
   authMethod?: 'api-key' | 'oauth'
+  feishuAppId?: string
+  feishuAppSecret?: string
+  installFeishuPlugin?: boolean
   telegramBotToken?: string
   modelId?: string
 }
@@ -59,6 +62,8 @@ const OAUTH_PROFILE_ID = 'openai-codex:default'
 const DEFAULT_MODELS: Record<string, string> = {
   momoai: 'momo_222'
 }
+
+const FEISHU_PLUGIN_PACKAGE = '@m1heng-clawd/feishu'
 
 const MODEL_SPECS: Partial<
   Record<OnboardConfig['provider'], { contextWindow: number; maxTokens: number }>
@@ -263,6 +268,18 @@ export const runOnboard = async (
     }
   }
 
+  if (config.feishuAppId && config.feishuAppSecret && config.installFeishuPlugin) {
+    log(t('onboarder.installingFeishu'))
+    await runCmd(
+      isWindows ? 'npm' : ocBin,
+      isWindows
+        ? ['exec', '--', 'openclaw', 'plugins', 'install', FEISHU_PLUGIN_PACKAGE]
+        : ['plugins', 'install', FEISHU_PLUGIN_PACKAGE],
+      log
+    )
+    log(t('onboarder.feishuInstalled'))
+  }
+
   // Stop immediately since onboard --install-daemon starts the daemon
   if (isMac) {
     const uid = process.getuid?.() ?? ''
@@ -326,6 +343,20 @@ export const runOnboard = async (
         [OAUTH_PROFILE_ID]: { provider: 'openai-codex', mode: 'oauth' }
       }
       cfg.auth.order = { ...cfg.auth.order, 'openai-codex': [OAUTH_PROFILE_ID] }
+    }
+    if (config.feishuAppId && config.feishuAppSecret) {
+      cfg.channels = cfg.channels ?? {}
+      cfg.channels.feishu = {
+        enabled: true,
+        appId: config.feishuAppId,
+        appSecret: config.feishuAppSecret,
+        domain: 'feishu',
+        connectionMode: 'websocket',
+        dmPolicy: 'pairing',
+        allowFrom: [],
+        groupPolicy: 'open',
+        requireMention: true
+      }
     }
     const spec = MODEL_SPECS[config.provider]
     if (spec && cfg.models?.providers) {
@@ -452,6 +483,7 @@ export interface CurrentConfig {
   provider?: string
   model?: string
   hasTelegram?: boolean
+  hasFeishu?: boolean
 }
 
 export const readCurrentConfig = async (): Promise<CurrentConfig | null> => {
@@ -469,9 +501,10 @@ export const readCurrentConfig = async (): Promise<CurrentConfig | null> => {
     const cfg = JSON.parse(raw) as any
     const model = cfg?.agents?.defaults?.model?.primary as string | undefined
     const hasTelegram = !!cfg?.channels?.telegram?.botToken
+    const hasFeishu = !!cfg?.channels?.feishu?.appId
     // Extract provider from model ID (e.g. "anthropic/claude-sonnet-4-6" → "anthropic")
     const provider = model?.split('/')[0]
-    return { provider, model, hasTelegram }
+    return { provider, model, hasTelegram, hasFeishu }
   } catch {
     return null
   }
@@ -497,8 +530,9 @@ export const switchProvider = async (
 
   log(t('onboarder.switchStarting'))
 
-  // 1. Preserve existing Telegram token
+  // 1. Preserve existing cloud channel config
   let savedTelegram: Record<string, unknown> | null = null
+  let savedFeishu: Record<string, unknown> | null = null
   try {
     let raw: string
     if (isWindows) {
@@ -510,6 +544,9 @@ export const switchProvider = async (
     const cfg = JSON.parse(raw) as any
     if (cfg?.channels?.telegram?.botToken) {
       savedTelegram = cfg.channels.telegram
+    }
+    if (cfg?.channels?.feishu?.appId) {
+      savedFeishu = cfg.channels.feishu
     }
   } catch {
     /* no config yet */
@@ -630,7 +667,8 @@ export const switchProvider = async (
   const patchSwitchConfig = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ocConfig: any,
-    telegram: Record<string, unknown> | null
+    telegram: Record<string, unknown> | null,
+    feishu: Record<string, unknown> | null
   ): void => {
     ocConfig.agents = ocConfig.agents ?? {}
     ocConfig.agents.defaults = ocConfig.agents.defaults ?? {}
@@ -688,9 +726,12 @@ export const switchProvider = async (
         }
       }
     }
-    // Restore Telegram token
+    // Restore cloud channel config
     if (telegram) {
       ocConfig.channels = { ...ocConfig.channels, telegram }
+    }
+    if (feishu) {
+      ocConfig.channels = { ...ocConfig.channels, feishu }
     }
   }
 
@@ -698,7 +739,7 @@ export const switchProvider = async (
     try {
       const raw = await readWslFile('/root/.openclaw/openclaw.json')
       const ocConfig = JSON.parse(raw)
-      patchSwitchConfig(ocConfig, savedTelegram)
+      patchSwitchConfig(ocConfig, savedTelegram, savedFeishu)
       await writeWslFile('/root/.openclaw/openclaw.json', JSON.stringify(ocConfig, null, 2))
     } catch {
       /* config not found */
@@ -707,7 +748,7 @@ export const switchProvider = async (
     const configPath = join(homedir(), '.openclaw', 'openclaw.json')
     if (existsSync(configPath)) {
       const ocConfig = JSON.parse(readFileSync(configPath, 'utf-8'))
-      patchSwitchConfig(ocConfig, savedTelegram)
+      patchSwitchConfig(ocConfig, savedTelegram, savedFeishu)
       writeFileSync(configPath, JSON.stringify(ocConfig, null, 2), { mode: 0o600 })
     }
   }

@@ -7,6 +7,7 @@
     "changeModel": "Change",
     "ocUpdateAvailable": "OpenClaw v{{latest}} update available",
     "ocCurrentVersion": "Currently v{{current}}",
+    "openFeishu": "Open Feishu",
     "openTelegram": "Open Telegram",
     "restartBtn": "Restart",
     "stopBtn": "Stop",

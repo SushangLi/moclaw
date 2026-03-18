@@ -1,11 +1,11 @@
 {
   "indicator": {
-    "default": ["Start", "Env", "Install", "API Key", "Telegram", "Config", "Done"],
-    "windows": ["Start", "Env", "WSL", "Install", "API Key", "Telegram", "Config", "Done"]
+    "default": ["Start", "Env", "Install", "API Key", "Cloud", "Config", "Done"],
+    "windows": ["Start", "Env", "WSL", "Install", "API Key", "Cloud", "Config", "Done"]
   },
   "welcome": {
     "title": "Your Own AI Agent, One Click Away",
-    "desc": "Install OpenClaw quickly and easily,\nthen chat with AI on Telegram",
+    "desc": "Install OpenClaw quickly and easily,\nthen connect your AI agent to cloud channels",
     "start": "Get Started",
     "language": "Language"
   },
@@ -91,33 +91,26 @@
     },
     "oauthDesc": "Sign in with your ChatGPT Plus/Pro subscription"
   },
-  "telegramGuide": {
-    "title": "Create a Telegram Bot",
-    "desc": "Let's create a Telegram bot to chat with your AI agent",
-    "steps": [
+  "cloudGuide": {
+    "title": "Choose Cloud Channels",
+    "desc": "Select which channels you want to connect to OpenClaw",
+    "options": [
       {
-        "title": "Search for BotFather",
-        "desc": "Search for @BotFather in the Telegram app. Select the official bot with the blue checkmark."
+        "key": "feishu",
+        "title": "Feishu",
+        "desc": "Set up the recommended Feishu cloud channel with app credentials."
       },
       {
-        "title": "Enter /newbot Command",
-        "desc": "Type /newbot in the BotFather chat. It will ask you for a bot name."
-      },
-      {
-        "title": "Enter Bot Display Name",
-        "desc": "Enter a display name for your bot. Example: EASYCLAW"
-      },
-      {
-        "title": "Choose Bot Username",
-        "desc": "Enter a unique ID ending with _bot. Example: my_moclaw_bot"
-      },
-      {
-        "title": "Copy Bot Token",
-        "desc": "Done! Make sure to copy the token in the format 123456:ABCDEF..."
+        "key": "telegram",
+        "title": "Telegram",
+        "desc": "Keep Telegram as an optional channel if you already use a bot token."
       }
     ],
-    "botfatherLink": "Go to BotFather ->",
-    "tokenReady": "Token is ready!"
+    "installFeishu": {
+      "title": "Install Feishu Plugin",
+      "desc": "Install the Feishu plugin during onboarding. Recommended and enabled by default."
+    },
+    "continue": "Continue"
   },
   "config": {
     "title": "API Key Configuration",
@@ -130,6 +123,11 @@
       "glm": "Z.AI API Key"
     },
     "required": "Required",
+    "optional": "Optional",
+    "feishuAppId": "Feishu App ID",
+    "feishuAppIdHint": "Correct format: cli_xxxxx",
+    "feishuAppSecret": "Feishu App Secret",
+    "feishuAppSecretPlaceholder": "Enter your Feishu app secret",
     "telegramToken": "Telegram Bot Token",
     "telegramHint": "Correct format: 123456:ABCDEF...",
     "errorOccurred": "An error occurred during configuration",

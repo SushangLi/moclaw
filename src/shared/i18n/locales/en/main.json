@@ -28,6 +28,8 @@
     "starting": "Starting OpenClaw initial setup...",
     "configCreatedSkipGw": "Configuration file created (skipping gateway verification)",
     "basicDone": "Basic setup complete!",
+    "installingFeishu": "Installing Feishu plugin...",
+    "feishuInstalled": "Feishu plugin installed!",
     "addingTelegram": "Adding Telegram channel...",
     "telegramDone": "Telegram channel added!",
     "configNotFound": "OpenClaw configuration file not found",

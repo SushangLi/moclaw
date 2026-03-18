@@ -40,6 +40,9 @@ const electronAPI = {
       provider: 'momoai'
       apiKey?: string
       authMethod?: 'api-key' | 'oauth'
+      feishuAppId?: string
+      feishuAppSecret?: string
+      installFeishuPlugin?: boolean
       telegramBotToken?: string
       modelId?: string
     }): Promise<{ success: boolean; error?: string; botUsername?: string }> =>
@@ -126,7 +129,12 @@ const electronAPI = {
   config: {
     read: (): Promise<{
       success: boolean
-      config: { provider?: string; model?: string; hasTelegram?: boolean } | null
+      config: {
+        provider?: string
+        model?: string
+        hasTelegram?: boolean
+        hasFeishu?: boolean
+      } | null
       error?: string
     }> => ipcRenderer.invoke('config:read'),
     switchProvider: (config: {

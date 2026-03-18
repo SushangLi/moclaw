@@ -7,6 +7,7 @@
     "changeModel": "更改",
     "ocUpdateAvailable": "OpenClaw v{{latest}} 可更新",
     "ocCurrentVersion": "当前 v{{current}}",
+    "openFeishu": "打开飞书",
     "openTelegram": "打开 Telegram",
     "restartBtn": "重启",
     "stopBtn": "停止",

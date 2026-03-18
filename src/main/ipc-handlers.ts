@@ -174,6 +174,9 @@ export const registerIpcHandlers = (getWin: () => BrowserWindow | null): void =>
         provider: 'momoai'
         apiKey?: string
         authMethod?: 'api-key' | 'oauth'
+        feishuAppId?: string
+        feishuAppSecret?: string
+        installFeishuPlugin?: boolean
         telegramBotToken?: string
         modelId?: string
       }

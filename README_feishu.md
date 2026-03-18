@@ -1,0 +1,1080 @@
+# clawd-feishu
+
+Feishu/Lark (飞书) channel plugin for [OpenClaw](https://github.com/openclaw/openclaw).
+
+> **中文社区资料** - 配置教程、常见问题、使用技巧：[Wiki](https://github.com/m1heng/clawdbot-feishu/wiki)
+>
+> **Contributing / 贡献指南**: [CONTRIBUTING.md](./CONTRIBUTING.md)
+>
+> **Issue Reporting / 问题反馈**: Please check [Discussions](https://github.com/m1heng/clawdbot-feishu/discussions) first for common solutions, then open a structured Issue Form if needed.  
+> 问题反馈前请先查看 [Discussions](https://github.com/m1heng/clawdbot-feishu/discussions) 是否已有常见解答；如仍未解决，再提交结构化 Issue 模板。
+>
+> **Questions / 使用咨询**: Use `Question` issue for troubleshooting; use [Discussions](https://github.com/m1heng/clawdbot-feishu/discussions) for open-ended Q&A.  
+> 排查型咨询请提交 `Question` Issue；开放式交流请使用 [Discussions](https://github.com/m1heng/clawdbot-feishu/discussions)。
+
+[English](#english) | [中文](#中文)
+
+---
+
+## Sponsor
+
+![YouYun Zhisuan](./assets/sponsor-youyunzhisuan.png)
+
+Thanks to our sponsors for supporting the project.
+
+If you need an API key platform whose models can be used as an OpenClaw provider and work with Kimi, MiniMax, Claude Code, Codex, or direct API usage, YouYun Zhisuan is worth considering:
+
+> UCloud's YouYun Zhisuan is an AI cloud platform that provides stable and comprehensive domestic and international model APIs through a single API key. Its high-value Coding Plan offers both monthly and pay-as-you-go options, typically at 20% to 50% of official pricing. It supports Claude Code, Codex, and direct API integrations, as well as enterprise-grade high concurrency, 24/7 technical support, and self-service invoicing. Register through [this link](https://passport.compshare.cn/register?referral_code=5oWQU772rtSCeExpcLFxwy&ytag=GPU_YY_YX_git_clawdbot-feishu) to receive a free RMB 5 platform trial credit.
+
+感谢赞助方对本项目的支持。
+
+如果你需要一个可作为 OpenClaw 模型 provider，并适用于 Kimi、MiniMax、Claude Code、Codex 或直接 API 调用的稳定 API Key 平台，可以了解一下优云智算：
+
+> 优云智算是UCloud旗下AI云平台，提供稳定、全面的国内外模型API，仅一个key即可调用。主打包月、按量的高性价比 Coding Plan 套餐，基于官方2~5折优惠。支持接入 Claude Code、Codex 及 API 调用。支持企业高并发、7*24技术支持、自助开票。通过[此链接](https://passport.compshare.cn/register?referral_code=5oWQU772rtSCeExpcLFxwy&ytag=GPU_YY_YX_git_clawdbot-feishu)注册的用户，可得免费5元平台体验金！
+
+## English
+
+### Installation
+
+```bash
+openclaw plugins install @m1heng-clawd/feishu
+```
+
+> [!IMPORTANT]
+> **Windows Troubleshooting (`spawn npm ENOENT`)**
+>
+> If `openclaw plugins install` fails, install manually with the latest tarball:
+>
+> ```bash
+> # Option A (recommended): download latest package tarball
+> npm pack @m1heng-clawd/feishu
+> openclaw plugins install ./m1heng-clawd-feishu-<version>.tgz
+> ```
+>
+> ```bash
+> # Option B (keep curl flow): resolve latest tarball URL, then download/install
+> TARBALL_URL="$(npm view @m1heng-clawd/feishu dist.tarball)"
+> curl -L -o feishu-latest.tgz "$TARBALL_URL"
+> openclaw plugins install ./feishu-latest.tgz
+> ```
+>
+> ```powershell
+> # Windows PowerShell (Option B)
+> $tarball = npm view @m1heng-clawd/feishu dist.tarball
+> curl.exe -L $tarball -o feishu-latest.tgz
+> openclaw plugins install .\feishu-latest.tgz
+> ```
+>
+> ```bash
+> # Option C (no npm command): use URL template with latest version from npm Versions tab
+> # https://www.npmjs.com/package/@m1heng-clawd/feishu?activeTab=versions
+> curl -L -o feishu-latest.tgz https://registry.npmjs.org/@m1heng-clawd/feishu/-/feishu-<version>.tgz
+> openclaw plugins install ./feishu-latest.tgz
+> ```
+
+### Upgrade
+
+```bash
+openclaw plugins update feishu
+```
+
+Check installed version:
+
+```bash
+openclaw plugins list | rg -i feishu
+```
+
+### Configuration
+
+1. Create a self-built app on [Feishu Open Platform](https://open.feishu.cn)
+2. Get your App ID and App Secret from the Credentials page
+3. Enable required permissions (see below)
+4. **Configure event subscriptions** (see below) ⚠️ Important
+5. Configure the plugin:
+
+#### Required Permissions
+
+| Permission | Scope | Description |
+|------------|-------|-------------|
+| `im:message` | Messaging | Send and receive messages |
+| `im:message.p2p_msg:readonly` | DM | Read direct messages to bot |
+| `im:message.group_at_msg:readonly` | Group | Receive @mention messages in groups |
+| `im:message:send_as_bot` | Send | Send messages as the bot |
+| `im:resource` | Media | Upload and download images/files |
+
+#### Optional Permissions
+
+| Permission | Scope | Description |
+|------------|-------|-------------|
+| `contact:user.base:readonly` | User info | Get basic user info (required to resolve sender display names for speaker attribution) |
+| `im:message.group_msg` | Group | Read all group messages (sensitive). Required when you want `requireMention: false` to work for non-@ group messages |
+| `im:message:readonly` | Read | Get message history |
+| `im:message:update` | Edit | Update/edit sent messages |
+| `im:message:recall` | Recall | Recall sent messages |
+| `im:message.reactions:read` | Reactions | View message reactions |
+
+#### Tool Permissions
+
+**Read-only** (minimum required):
+
+| Permission | Tool | Description |
+|------------|------|-------------|
+| `docx:document:readonly` | `feishu_doc` | Read documents |
+| `drive:drive:readonly` | `feishu_drive` | List folders, get file info |
+| `wiki:wiki:readonly` | `feishu_wiki` | List spaces, list nodes, get node info, search |
+| `bitable:app:readonly` | `feishu_bitable` | Read bitable records and fields |
+| `task:task:read` | `feishu_task_get` | Get task details |
+| `task:tasklist:read` | `feishu_tasklist_get`, `feishu_tasklist_list` | Get/list tasklists |
+| `task:comment:read` | `feishu_task_comment_list`, `feishu_task_comment_get` | List/get task comments |
+| `task:attachment:read` | `feishu_task_attachment_list`, `feishu_task_attachment_get` | List/get task attachments |
+| `im:chat.announcement:read` | `feishu_chat` | Read group announcement |
+| `im:chat:readonly` | `feishu_chat` | Get chat info, check bot membership |
+| `im:message` or `im:message:readonly` | `feishu_message` | Read single/DM messages |
+| `im:message.group_at_msg:readonly` | `feishu_message` | Read all messages in group chats |
+| `im:message.reactions:read` | `feishu_reaction` | List reactions on messages |
+
+**Read-write** (optional, for create/edit/delete operations):
+
+| Permission | Tool | Description |
+|------------|------|-------------|
+| `docx:document` | `feishu_doc` | Create/edit documents |
+| `docx:document.block:convert` | `feishu_doc` | Markdown to blocks conversion (required for write/append/create_and_write; also used by `feishu_drive.import_document`) |
+| `drive:drive` | `feishu_doc`, `feishu_drive` | Upload images to documents, create folders, move/delete files |
+| `wiki:wiki` | `feishu_wiki` | Create/move/rename wiki nodes |
+| `bitable:app` | `feishu_bitable` | Create/update/delete bitable records and manage fields |
+| `task:task:write` | `feishu_task_create`, `feishu_task_subtask_create`, `feishu_task_update`, `feishu_task_delete` | Create/update/delete tasks |
+| `task:tasklist:write` | `feishu_tasklist_create`, `feishu_tasklist_update`, `feishu_tasklist_delete`, `feishu_tasklist_add_members`, `feishu_tasklist_remove_members`, `feishu_task_add_tasklist`, `feishu_task_remove_tasklist` | Create/update/delete tasklists and manage membership |
+| `task:comment:write` | `feishu_task_comment_create`, `feishu_task_comment_update`, `feishu_task_comment_delete` | Create/update/delete task comments |
+| `task:attachment:write` | `feishu_task_attachment_upload`, `feishu_task_attachment_delete` | Upload/delete task attachments |
+| `im:message.urgent` | `feishu_urgent` | Send urgent (buzz) notifications via app (in-app). Use `sms` and `phone` variants (`im:message.urgent:sms`, `im:message.urgent:phone`) for SMS and voice call. |
+| `im:chat.announcement` | `feishu_chat` | Write/update group announcement |
+| `im:chat` | `feishu_chat` | Create and delete group chats |
+| `im:chat.members` | `feishu_chat` | Add members to group chats |
+| `im:message.reactions:write_only` | `feishu_reaction` | Add and remove reactions |
+
+> Task scope names may vary slightly in Feishu console UI. If needed, search for Task / Tasklist / Comment / Attachment-related permissions and grant read/write accordingly.
+
+#### Task Comment Scopes ⚠️
+
+Task comments require dedicated scopes:
+1. Read comments: grant `task:comment:read`.
+2. Create/update/delete comments: grant `task:comment:write`.
+
+If these scopes are missing, comment APIs will return permission-denied errors.
+
+#### Task Attachment Upload ⚠️
+
+Task attachments support upload/get/list/delete. Upload sources:
+1. Local files on the OpenClaw/Node host (`file_path`)
+2. Remote links (`file_url`, public or presigned)
+
+For `file_url`, OpenClaw runtime media loader is used with safety checks and size limit (`mediaMaxMb`), then the downloaded file is uploaded via a temporary local file.
+
+#### Tasklist Ownership ⚠️
+
+> **Important:** Keep tasklist owner as the bot. Add users as members instead.
+
+Tasklist access is granted based on owner + member roles. If you change the owner to a user and the bot is not a member, the bot may lose permission to read/edit/manage that tasklist (and subsequent operations will fail).
+
+#### Task Visibility & Subtasks ⚠️
+
+> **Important:** A user can only view a task when they are included as an assignee.
+>
+> **Limitation:** The bot can currently only create subtasks for tasks created by itself.
+
+To avoid “task created but not visible” issues:
+1. When creating a task, set the requesting user as an assignee.
+2. If you need more flexible subtask organization/visibility, consider using tasklists.
+
+#### Drive Access ⚠️
+
+> **Important:** Bots don't have their own "My Space" (root folder). Bots can only access files/folders that have been **shared with them**.
+
+To let the bot manage files:
+1. Create a folder in your Feishu Drive
+2. Right-click the folder → **Share** → search for your bot name
+3. Grant appropriate permission (view/edit)
+
+Without this step, `feishu_drive` operations like `create_folder` will fail because the bot has no root folder to create in.
+
+#### Wiki Space Access ⚠️
+
+> **Important:** API permissions alone are not enough for wiki access. You must also add the bot to each wiki space.
+
+1. Open the wiki space you want the bot to access
+2. Click **Settings** (gear icon) → **Members**
+3. Click **Add Member** → search for your bot name
+4. Select appropriate permission level (view/edit)
+
+Without this step, `feishu_wiki` will return empty results even with correct API permissions.
+
+Reference: [Wiki FAQ - How to add app to wiki](https://open.feishu.cn/document/server-docs/docs/wiki-v2/wiki-qa#a40ad4ca)
+
+#### Bitable Access ⚠️
+
+> **Important:** Like other resources, the bot can only access bitables that have been **shared with it**.
+
+To let the bot access a bitable:
+1. Open the bitable you want the bot to access
+2. Click **Share** button → search for your bot name
+3. Grant appropriate permission (view/edit)
+
+The `feishu_bitable` tools support both URL formats:
+- `/base/XXX?table=YYY` - Standard bitable URL
+- `/wiki/XXX?table=YYY` - Bitable embedded in wiki (auto-converts to app_token)
+
+#### Event Subscriptions ⚠️
+
+> **This is the most commonly missed configuration!** If the bot can send messages but cannot receive them, check this section.
+
+In the Feishu Open Platform console, go to **Events & Callbacks**:
+
+1. **Event configuration**: Select the subscription mode matching your `connectionMode`:
+   - **Long connection** — for `connectionMode: "websocket"` (recommended, no public URL needed)
+   - **Request URL** — for `connectionMode: "webhook"` (requires a publicly accessible URL)
+2. **Add event subscriptions**:
+
+| Event | Description |
+|-------|-------------|
+| `im.message.receive_v1` | Receive messages (required) |
+| `im.message.message_read_v1` | Message read receipts |
+| `im.chat.member.bot.added_v1` | Bot added to group |
+| `im.chat.member.bot.deleted_v1` | Bot removed from group |
+
+3. Ensure the event permissions are approved
+
+```bash
+openclaw config set channels.feishu.appId "cli_xxxxx"
+openclaw config set channels.feishu.appSecret "your_app_secret"
+openclaw config set channels.feishu.enabled true
+```
+
+### Configuration Options
+
+```yaml
+channels:
+  feishu:
+    enabled: true
+    appId: "cli_xxxxx"
+    appSecret: "secret"
+    # Domain: "feishu" (China), "lark" (International), or custom URL
+    domain: "feishu"  # or "https://open.xxx.cn" for private deployment
+    # Connection mode: "websocket" (recommended) or "webhook"
+    connectionMode: "websocket"
+    # DM policy: "pairing" | "open" | "allowlist"
+    dmPolicy: "pairing"
+    # DM allowlist (open_id/user_id). Include "*" when dmPolicy="open"
+    allowFrom: []
+    # Group policy: "open" | "allowlist" | "disabled"
+    groupPolicy: "allowlist"
+    # Require @mention in groups
+    requireMention: true
+    # Safety default for mention-free mode (`requireMention: false`):
+    # only allow non-@ messages in groups with <= 1 bot.
+    # Set true to also allow mention-free messages in multi-bot groups.
+    allowMentionlessInMultiBotGroup: false
+    # Group command mention bypass: "never" | "single_bot" | "always"
+    # Default "single_bot": allow authorized command-only messages without @
+    # only when the group has a single bot.
+    groupCommandMentionBypass: "single_bot"
+    # Max media size in MB (default: 30)
+    mediaMaxMb: 30
+    # Render mode for bot replies: "auto" | "raw" | "card"
+    renderMode: "auto"
+```
+
+#### DM Policy & Access Control
+
+`dmPolicy` controls who can interact with the bot in direct messages (DM).  
+In multi-account mode, this is resolved per account (`channels.feishu.accounts.<accountId>`).
+
+| `dmPolicy` | Who can send DM | How to grant access to a user |
+|------------|------------------|--------------------------------|
+| `pairing` | Users in `allowFrom`, or users approved through pairing | User sends a DM and gets a pairing code; bot owner runs `openclaw pairing approve feishu <code>`. |
+| `open` | Everyone | Set `allowFrom: ["*"]` so all users are treated as allowed. |
+| `allowlist` | Only users in `allowFrom` | Add the user's `open_id`/`user_id` to `allowFrom`, then reload config. |
+
+Notes:
+- `allowFrom` accepts Feishu user IDs (`open_id` recommended, `user_id` also supported).
+- If `dmPolicy: "open"`, use `allowFrom: ["*"]`. This is required by top-level schema validation and keeps access behavior explicit.
+- `pairing` and `allowlist` can both pre-authorize users with `allowFrom`.
+
+Pairing flow (owner approval):
+1. User sends any DM to the bot.
+2. Bot replies with a pairing code (for example `H9ZEHY8R`).
+3. Bot owner approves:
+
+```bash
+openclaw pairing approve feishu H9ZEHY8R
+```
+
+4. The user is added to the allow store and can chat immediately.
+
+Example: open to everyone
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "open"
+    allowFrom: ["*"]
+```
+
+Example: controlled rollout (pairing + pre-approved users)
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "pairing"
+    allowFrom:
+      - "ou_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+Example: strict allowlist
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "allowlist"
+    allowFrom:
+      - "ou_alice"
+      - "ou_bob"
+```
+
+Example: account-level isolation
+
+```yaml
+channels:
+  feishu:
+    accounts:
+      lobster-1:
+        dmPolicy: "open"
+        allowFrom: ["*"]
+      lobster-5:
+        dmPolicy: "pairing"
+```
+
+Top-level `channels.feishu.dmPolicy` / `channels.feishu.allowFrom` are fallback defaults for accounts that do not override them.
+
+> `dmPolicy` only controls who can trigger the bot.  
+> To actually read/write docs or files, you still need: (1) correct Feishu app scopes, and (2) sharing the target resources (Drive/Wiki/Bitable) with the bot.
+
+#### Group Command Mention Bypass
+
+When `requireMention: true`, Feishu can still allow authorized control commands (such as `/new`) without `@bot`.
+
+| `groupCommandMentionBypass` | Behavior |
+|----------------------------|----------|
+| `never` | Never bypass `@` requirement for group commands. |
+| `single_bot` | Bypass only when the group contains at most one bot (default). |
+| `always` | Always allow authorized control commands to bypass mention gating. |
+
+Notes:
+- Bypass only applies to authorized control commands in group chats.
+- If any user is explicitly `@`-mentioned in the same message, bypass is disabled.
+- In DMs, this setting does not apply.
+
+#### Group Mention-Free Behavior (`requireMention: false`)
+
+When `requireMention: false`, non-@ group messages are handled with a safety default:
+
+| `allowMentionlessInMultiBotGroup` | Behavior for non-@ group messages |
+|-----------------------------------|-----------------------------------|
+| `false` (default) | Only accepted when the group has at most one bot. In multi-bot groups, explicit `@bot` is still required. |
+| `true` | Accepted even in multi-bot groups (use only if you accept duplicate-trigger risk). |
+
+Important:
+- `im:message.group_msg` is required for receiving non-@ group messages and this is a **sensitive permission** in Feishu.
+- If this scope is not approved, Feishu usually only delivers `@bot` group messages (`im:message.group_at_msg:readonly`).
+
+#### Connection Mode
+
+Two connection modes are available for receiving events from Feishu:
+
+| Mode | Description |
+|------|-------------|
+| `websocket` | (Default, recommended) Long-polling WebSocket connection. No public URL required, works behind NAT/firewall. Best for local development and most deployments. |
+| `webhook` | HTTP server that receives event callbacks. Requires a publicly accessible URL. Suitable for server deployments behind a reverse proxy (e.g. Nginx). |
+
+**WebSocket mode** (default, no extra config needed):
+
+```yaml
+channels:
+  feishu:
+    connectionMode: "websocket"  # or just omit this line
+```
+
+In Feishu console: Events & Callbacks → select **Long connection**.
+
+**Webhook mode**:
+
+```yaml
+channels:
+  feishu:
+    connectionMode: "webhook"
+    webhookPort: 3000               # HTTP server port (default: 3000)
+    webhookPath: "/feishu/events"   # Event callback path (default: "/feishu/events")
+    encryptKey: "your_encrypt_key"           # From Feishu console → Events & Callbacks → Encrypt Key
+    verificationToken: "your_verify_token"   # From Feishu console → Events & Callbacks → Verification Token
+```
+
+In Feishu console: Events & Callbacks → select **Request URL** → set the URL to:
+
+```
+https://your-domain.com/feishu/events
+```
+
+> **Note:** The Request URL must be HTTPS and publicly accessible. For local development, you can use tools like [ngrok](https://ngrok.com) to create a tunnel: `ngrok http 3000`, then use the generated URL.
+
+#### Render Mode
+
+| Mode | Description |
+|------|-------------|
+| `auto` | (Default) Automatically detect: use card for messages with code blocks or tables, plain text otherwise. |
+| `raw` | Always send replies as plain text. Markdown tables are converted to ASCII. |
+| `card` | Always send replies as interactive cards with full markdown rendering (syntax highlighting, tables, clickable links). |
+
+#### Dynamic Agent Creation (Multi-User Workspace Isolation)
+
+When enabled, each DM user automatically gets their own isolated agent instance with a dedicated workspace. This provides complete isolation including separate conversation history, memory (MEMORY.md), and workspace files.
+
+#### Chat Management Limitations ⚠️
+
+> **Important:** `delete_chat` requires the bot to be the **group owner**. If the bot was added to an existing chat as a member (not the owner), it cannot disband it.
+>
+> If you need to disband a chat that the bot does not own:
+> 1. The **group owner** transfers ownership to the bot first, or
+> 2. The group owner disbands the group directly in the Feishu app.
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "open"
+    allowFrom: ["*"]
+    dynamicAgentCreation:
+      enabled: true
+      # Template for workspace directory ({userId} = OpenID, {agentId} = generated agent ID)
+      workspaceTemplate: "~/workspaces/feishu-{agentId}"
+      # Template for agent config directory
+      agentDirTemplate: "~/.openclaw/agents/{agentId}/agent"
+      # Optional: limit total number of dynamic agents
+      maxAgents: 100
+
+session:
+  # Also set dmScope for session isolation (conversation history)
+  dmScope: "per-peer"
+```
+
+| Option | Description |
+|--------|-------------|
+| `enabled` | Enable dynamic agent creation for DM users |
+| `workspaceTemplate` | Template for workspace path. Supports `{userId}` (OpenID) and `{agentId}` (= `feishu-{openId}`) |
+| `agentDirTemplate` | Template for agent directory path |
+| `maxAgents` | Optional limit on number of dynamic agents |
+
+**How it works:**
+1. When a new user sends a DM, the system creates a new agent entry in `openclaw.json`
+2. A binding is created to route that user's DM to their dedicated agent
+3. Workspace and agent directories are created automatically
+4. Subsequent messages from that user go to their isolated agent
+
+**Difference from `dmScope: "per-peer"`:**
+- `dmScope: "per-peer"` only isolates conversation history
+- `dynamicAgentCreation` provides full isolation (workspace, memory, identity, tools)
+
+### Features
+
+- WebSocket and Webhook connection modes
+- Direct messages and group chats
+- Message replies and quoted message context
+- **Inbound media support**: AI can see images, read files (PDF, Excel, etc.), and process rich text with embedded images
+- Image and file uploads (outbound)
+- Typing indicator (via emoji reactions)
+- Pairing flow for DM approval
+- User and group directory lookup
+- **Card render mode**: Optional markdown rendering with syntax highlighting
+- **Document tools**: Read, create, and write Feishu documents with markdown, including atomic `create_and_write` / `import_document` flows for reliable create+content write
+- **Wiki tools**: Navigate knowledge bases, list spaces, get node details, search, create/move/rename nodes
+- **Drive tools**: List folders, get file info, create folders, move/delete files
+- **Bitable tools**: Manage bitable (多维表格) fields and records (read/create/update/delete), supports both `/base/` and `/wiki/` URLs
+- **Task tools**: Create, get details, update, and delete tasks via Feishu Task v2 API
+- **Chat tools**: Read and write group announcements, create group chats, add members, check bot membership, delete chats (`feishu_chat`)
+- **Urgent notification tools**: Send buzz/urgent notifications (app, SMS, voice call) via `feishu_urgent`
+- **Message tools**: Read single messages or list recent chat history with time range and pagination (`feishu_message`)
+- **Reaction tools**: Add, remove, and list emoji reactions on messages (`feishu_reaction`)
+- **@mention forwarding**: When you @mention someone in your message, the bot's reply will automatically @mention them too
+- **Permission error notification**: When the bot encounters a Feishu API permission error, it automatically notifies the user with the permission grant URL
+- **Dynamic agent creation**: Each DM user can have their own isolated agent instance with dedicated workspace (optional)
+
+#### @Mention Forwarding
+
+When you want the bot to @mention someone in its reply, simply @mention them in your message:
+
+- **In DM**: `@张三 say hello` → Bot replies with `@张三 Hello!`
+- **In Group**: `@bot @张三 say hello` → Bot replies with `@张三 Hello!`
+
+The bot automatically detects @mentions in your message and includes them in its reply. No extra permissions required beyond the standard messaging permissions.
+
+### FAQ
+
+#### Bot cannot receive messages
+
+Check the following:
+1. Have you configured **event subscriptions**? (See Event Subscriptions section)
+2. Does the event subscription mode match your `connectionMode`?
+   - `websocket` → **Long connection** in Feishu console
+   - `webhook` → **Request URL** in Feishu console (URL must be reachable)
+3. Did you add the `im.message.receive_v1` event?
+4. Are the permissions approved?
+5. For webhook mode: is your server running and the URL publicly accessible?
+
+#### `requireMention: false` but group still needs @
+
+Check the following:
+1. Is `im:message.group_msg` approved? (sensitive permission, required for non-@ group messages)
+2. If the group has multiple bots, do you explicitly set `allowMentionlessInMultiBotGroup: true`?
+3. Is `requireMention: false` configured on the effective account/group?
+
+#### 403 error when sending messages
+
+Ensure `im:message:send_as_bot` permission is approved.
+
+#### How to clear history / start new conversation
+
+Send `/new` command in the chat.
+
+#### Why is the output not streaming
+
+Feishu API has rate limits. Streaming updates can easily trigger throttling. We use complete-then-send approach for stability.
+
+#### Cannot find the bot in Feishu
+
+1. Ensure the app is published (at least to test version)
+2. Search for the bot name in Feishu search box
+3. Check if your account is in the app's availability scope
+
+---
+
+## 中文
+
+### 安装
+
+```bash
+openclaw plugins install @m1heng-clawd/feishu
+```
+
+> [!IMPORTANT]
+> **Windows 排错（`spawn npm ENOENT`）**
+>
+> 如果 `openclaw plugins install` 失败，可通过最新 tarball 手动安装：
+>
+> ```bash
+> # 方案 A（推荐）：下载最新插件 tarball
+> npm pack @m1heng-clawd/feishu
+> openclaw plugins install ./m1heng-clawd-feishu-<version>.tgz
+> ```
+>
+> ```bash
+> # 方案 B（保留 curl 路径）：先解析最新 tarball 地址，再下载安装
+> TARBALL_URL="$(npm view @m1heng-clawd/feishu dist.tarball)"
+> curl -L -o feishu-latest.tgz "$TARBALL_URL"
+> openclaw plugins install ./feishu-latest.tgz
+> ```
+>
+> ```powershell
+> # Windows PowerShell（方案 B）
+> $tarball = npm view @m1heng-clawd/feishu dist.tarball
+> curl.exe -L $tarball -o feishu-latest.tgz
+> openclaw plugins install .\feishu-latest.tgz
+> ```
+>
+> ```bash
+> # 方案 C（无 npm 命令）：先在 npm Versions 页查到最新版本号，再套用 URL 模板
+> # https://www.npmjs.com/package/@m1heng-clawd/feishu?activeTab=versions
+> curl -L -o feishu-latest.tgz https://registry.npmjs.org/@m1heng-clawd/feishu/-/feishu-<version>.tgz
+> openclaw plugins install ./feishu-latest.tgz
+> ```
+
+### 升级
+
+```bash
+openclaw plugins update feishu
+```
+
+查看已安装版本：
+
+```bash
+openclaw plugins list | rg -i feishu
+```
+
+### 配置
+
+1. 在 [飞书开放平台](https://open.feishu.cn) 创建自建应用
+2. 在凭证页面获取 App ID 和 App Secret
+3. 开启所需权限（见下方）
+4. **配置事件订阅**（见下方）⚠️ 重要
+5. 配置插件：
+
+#### 必需权限
+
+| 权限 | 范围 | 说明 |
+|------|------|------|
+| `im:message` | 消息 | 发送和接收消息 |
+| `im:message.p2p_msg:readonly` | 私聊 | 读取发给机器人的私聊消息 |
+| `im:message.group_at_msg:readonly` | 群聊 | 接收群内 @机器人 的消息 |
+| `im:message:send_as_bot` | 发送 | 以机器人身份发送消息 |
+| `im:resource` | 媒体 | 上传和下载图片/文件 |
+
+#### 可选权限
+
+| 权限 | 范围 | 说明 |
+|------|------|------|
+| `contact:user.base:readonly` | 用户信息 | 获取用户基本信息（用于解析发送者姓名，避免群聊/私聊把不同人当成同一说话者） |
+| `im:message.group_msg` | 群聊 | 读取所有群消息（敏感权限）。当你希望 `requireMention: false` 对“未 @ 的群消息”生效时必需 |
+| `im:message:readonly` | 读取 | 获取历史消息 |
+| `im:message:update` | 编辑 | 更新/编辑已发送消息 |
+| `im:message:recall` | 撤回 | 撤回已发送消息 |
+| `im:message.reactions:read` | 表情 | 查看消息表情回复 |
+
+#### 工具权限
+
+**只读权限**（最低要求）：
+
+| 权限 | 工具 | 说明 |
+|------|------|------|
+| `docx:document:readonly` | `feishu_doc` | 读取文档 |
+| `drive:drive:readonly` | `feishu_drive` | 列出文件夹、获取文件信息 |
+| `wiki:wiki:readonly` | `feishu_wiki` | 列出空间、列出节点、获取节点详情、搜索 |
+| `bitable:app:readonly` | `feishu_bitable` | 读取多维表格记录和字段 |
+| `task:task:read` | `feishu_task_get` | 获取任务详情 |
+| `task:tasklist:read` | `feishu_tasklist_get`, `feishu_tasklist_list` | 获取/列出任务清单（tasklists） |
+| `task:comment:read` | `feishu_task_comment_list`, `feishu_task_comment_get` | 列出/获取任务评论 |
+| `task:attachment:read` | `feishu_task_attachment_list`, `feishu_task_attachment_get` | 列出/获取任务附件 |
+| `im:chat.announcement:read` | `feishu_chat` | 读取群公告 |
+| `im:chat:readonly` | `feishu_chat` | 获取群信息、检查机器人是否在群内 |
+| `im:message` 或 `im:message:readonly` | `feishu_message` | 读取单条/私聊消息 |
+| `im:message.group_at_msg:readonly` | `feishu_message` | 读取群聊中所有消息 |
+| `im:message.reactions:read` | `feishu_reaction` | 查看消息表情回复 |
+
+**读写权限**（可选，用于创建/编辑/删除操作）：
+
+| 权限 | 工具 | 说明 |
+|------|------|------|
+| `docx:document` | `feishu_doc` | 创建/编辑文档 |
+| `docx:document.block:convert` | `feishu_doc` | Markdown 转 blocks（write/append/create_and_write 必需，`feishu_drive.import_document` 也会用到） |
+| `drive:drive` | `feishu_doc`, `feishu_drive` | 上传图片到文档、创建文件夹、移动/删除文件 |
+| `wiki:wiki` | `feishu_wiki` | 创建/移动/重命名知识库节点 |
+| `bitable:app` | `feishu_bitable` | 创建/更新/删除多维表格记录并管理字段 |
+| `task:task:write` | `feishu_task_create`, `feishu_task_subtask_create`, `feishu_task_update`, `feishu_task_delete` | 创建/更新/删除任务 |
+| `task:tasklist:write` | `feishu_tasklist_create`, `feishu_tasklist_update`, `feishu_tasklist_delete`, `feishu_tasklist_add_members`, `feishu_tasklist_remove_members`, `feishu_task_add_tasklist`, `feishu_task_remove_tasklist` | 创建/更新/删除任务清单并管理成员/关联任务 |
+| `task:comment:write` | `feishu_task_comment_create`, `feishu_task_comment_update`, `feishu_task_comment_delete` | 创建/更新/删除任务评论 |
+| `task:attachment:write` | `feishu_task_attachment_upload`, `feishu_task_attachment_delete` | 上传/删除任务附件 |
+| `im:message.urgent` | `feishu_urgent` | 发送应用内加急（buzz）通知。使用 `sms` 和 `phone` 变体（`im:message.urgent:sms`、`im:message.urgent:phone`）可发送短信和语音电话加急。 |
+| `im:chat.announcement` | `feishu_chat` | 写入/更新群公告 |
+| `im:chat` | `feishu_chat` | 创建和删除群聊 |
+| `im:chat.members` | `feishu_chat` | 向群聊添加成员 |
+| `im:message.reactions:write_only` | `feishu_reaction` | 发送、删除消息表情回复 |
+
+> 飞书控制台中任务权限的显示名称可能略有差异，必要时可按关键字 `task` / `tasklist` / `comment` / `attachment` 搜索并授予对应读写权限。
+
+#### 任务评论权限 ⚠️
+
+任务评论需要单独授权：
+1. 读取评论：授予 `task:comment:read`。
+2. 创建/更新/删除评论：授予 `task:comment:write`。
+
+缺少上述权限时，评论相关接口会返回权限不足错误。
+
+#### 任务附件上传 ⚠️
+
+任务附件支持上传/获取/列表/删除。上传来源：
+1. OpenClaw/Node 所在机器的本地文件路径（`file_path`）
+2. 可直接下载的远程链接（`file_url`，公开/预签名 URL）
+
+`file_url` 上传路径会使用 OpenClaw 运行时的媒体下载安全校验与大小限制（`mediaMaxMb`），随后经临时本地文件上传到任务附件。
+
+#### 任务清单所有者限制 ⚠️
+
+> **重要：** 创建/修改任务清单时，请保持清单所有者为机器人本身，只把用户作为协作人添加。
+
+任务清单权限基于“所有者 + 协作成员角色”授予。如果把清单所有者改成用户、且机器人不在协作成员中，机器人可能会失去对该清单的读取/编辑/管理权限，导致后续对清单的操作失败。
+
+#### 任务限制 ⚠️
+
+> **重要：** 只有当任务责任人包含用户时，用户才能查看到该任务。
+>
+> **限制：** 机器人目前只能给自己创建出来的任务创建子任务。
+
+为避免“任务创建了但用户看不到”的问题：
+1. 创建任务时，请把发起用户设为任务负责人（`assignee`）。
+2. 如需更灵活的子任务创建/组织/可见性管理，建议使用任务清单（tasklists）。
+
+#### 云空间访问权限 ⚠️
+
+> **重要：** 机器人没有自己的"我的空间"（根目录）。机器人只能访问**被分享给它的文件/文件夹**。
+
+要让机器人管理文件：
+1. 在你的飞书云空间创建一个文件夹
+2. 右键文件夹 → **分享** → 搜索机器人名称
+3. 授予相应权限（查看/编辑）
+
+如果不做这一步，`feishu_drive` 的 `create_folder` 等操作会失败，因为机器人没有根目录可以创建文件夹。
+
+#### 知识库空间权限 ⚠️
+
+> **重要：** 仅有 API 权限不够，还需要将机器人添加到知识库空间。
+
+1. 打开需要机器人访问的知识库空间
+2. 点击 **设置**（齿轮图标）→ **成员管理**
+3. 点击 **添加成员** → 搜索机器人名称
+4. 选择权限级别（查看/编辑）
+
+如果不做这一步，即使 API 权限正确，`feishu_wiki` 也会返回空结果。
+
+参考文档：[知识库常见问题 - 如何将应用添加为知识库成员](https://open.feishu.cn/document/server-docs/docs/wiki-v2/wiki-qa#a40ad4ca)
+
+#### 多维表格访问权限 ⚠️
+
+> **重要：** 与其他资源一样，机器人只能访问**被分享给它的多维表格**。
+
+要让机器人访问多维表格：
+1. 打开需要机器人访问的多维表格
+2. 点击 **分享** 按钮 → 搜索机器人名称
+3. 授予相应权限（查看/编辑）
+
+`feishu_bitable` 工具支持两种 URL 格式：
+- `/base/XXX?table=YYY` - 标准多维表格链接
+- `/wiki/XXX?table=YYY` - 嵌入在知识库中的多维表格（自动转换为 app_token）
+
+#### 事件订阅 ⚠️
+
+> **这是最容易遗漏的配置！** 如果机器人能发消息但收不到消息，请检查此项。
+
+在飞书开放平台的应用后台，进入 **事件与回调** 页面：
+
+1. **事件配置方式**：根据你的 `connectionMode` 选择对应的订阅方式：
+   - **使用长连接接收事件** — 对应 `connectionMode: "websocket"`（推荐，无需公网地址）
+   - **使用请求地址接收事件** — 对应 `connectionMode: "webhook"`（需要公网可访问的 URL）
+2. **添加事件订阅**，勾选以下事件：
+
+| 事件 | 说明 |
+|------|------|
+| `im.message.receive_v1` | 接收消息（必需） |
+| `im.message.message_read_v1` | 消息已读回执 |
+| `im.chat.member.bot.added_v1` | 机器人进群 |
+| `im.chat.member.bot.deleted_v1` | 机器人被移出群 |
+
+3. 确保事件订阅的权限已申请并通过审核
+
+```bash
+openclaw config set channels.feishu.appId "cli_xxxxx"
+openclaw config set channels.feishu.appSecret "your_app_secret"
+openclaw config set channels.feishu.enabled true
+```
+
+### 配置选项
+
+```yaml
+channels:
+  feishu:
+    enabled: true
+    appId: "cli_xxxxx"
+    appSecret: "secret"
+    # 域名: "feishu" (国内)、"lark" (国际) 或自定义 URL
+    domain: "feishu"  # 私有化部署可用 "https://open.xxx.cn"
+    # 连接模式: "websocket" (推荐) 或 "webhook"
+    connectionMode: "websocket"
+    # 私聊策略: "pairing" | "open" | "allowlist"
+    dmPolicy: "pairing"
+    # 私聊白名单（open_id/user_id）；当 dmPolicy="open" 时请包含 "*"
+    allowFrom: []
+    # 群聊策略: "open" | "allowlist" | "disabled"
+    groupPolicy: "allowlist"
+    # 群聊是否需要 @机器人
+    requireMention: true
+    # 免 @ 安全默认策略（requireMention=false 时）：
+    # 仅在群内机器人数量 <= 1 时处理未 @ 的群消息。
+    # 设为 true 可在多 bot 群也放开免 @（需自行承担重复触发风险）。
+    allowMentionlessInMultiBotGroup: false
+    # 群聊命令绕过 @ 策略: "never" | "single_bot" | "always"
+    # 默认 "single_bot"：仅当群内机器人数量 <= 1 时，允许已授权命令免 @
+    groupCommandMentionBypass: "single_bot"
+    # 媒体文件最大大小 (MB, 默认 30)
+    mediaMaxMb: 30
+    # 回复渲染模式: "auto" | "raw" | "card"
+    renderMode: "auto"
+```
+
+#### 私聊策略（dmPolicy）与访问授权
+
+`dmPolicy` 控制的是“谁可以在私聊里触发机器人”。  
+在多账号模式下，它按账号生效（`channels.feishu.accounts.<accountId>`）。
+
+| `dmPolicy` | 谁能私聊触发机器人 | 如何给用户开通 |
+|------------|------------------|----------------|
+| `pairing` | `allowFrom` 中的用户，或已通过配对审批的用户 | 用户先私聊机器人拿到配对码；管理员执行 `openclaw pairing approve feishu <code>`。 |
+| `open` | 所有人 | 配置 `allowFrom: ["*"]`，表示全部放开。 |
+| `allowlist` | 仅 `allowFrom` 中的用户 | 将用户 `open_id`/`user_id` 加入 `allowFrom`，然后重载配置。 |
+
+说明：
+- `allowFrom` 支持飞书用户 ID（推荐 `open_id`，也支持 `user_id`）。
+- 当 `dmPolicy: "open"` 时，建议固定写 `allowFrom: ["*"]`，语义最清晰，也满足顶层配置校验要求。
+- `pairing` 和 `allowlist` 都可以先通过 `allowFrom` 预授权部分用户。
+
+配对审批流程（pairing）：
+1. 用户先给机器人发一条私聊消息。
+2. 机器人返回配对码（例如 `H9ZEHY8R`）。
+3. 管理员执行审批命令：
+
+```bash
+openclaw pairing approve feishu H9ZEHY8R
+```
+
+4. 审批后该用户立即可用。
+
+示例：全部放开
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "open"
+    allowFrom: ["*"]
+```
+
+示例：灰度放开（pairing + 预授权）
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "pairing"
+    allowFrom:
+      - "ou_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+示例：严格白名单
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "allowlist"
+    allowFrom:
+      - "ou_alice"
+      - "ou_bob"
+```
+
+示例：按账号隔离配置
+
+```yaml
+channels:
+  feishu:
+    accounts:
+      lobster-1:
+        dmPolicy: "open"
+        allowFrom: ["*"]
+      lobster-5:
+        dmPolicy: "pairing"
+```
+
+`channels.feishu.dmPolicy` / `channels.feishu.allowFrom` 是“默认值”；账号下未覆盖时才会继承。
+
+> `dmPolicy` 只控制“是否允许触发机器人”。  
+> 真正执行文档/云盘/知识库/多维表格操作，还需要两层权限：1）应用 API 权限（scopes）；2）把目标资源分享给机器人。
+
+#### 群聊命令免 @ 策略
+
+当 `requireMention: true` 时，Feishu 仍可让“已授权控制命令（如 `/new`）”在不 `@bot` 的情况下通过。
+
+| `groupCommandMentionBypass` | 行为 |
+|----------------------------|------|
+| `never` | 群聊命令永不绕过 `@` 校验。 |
+| `single_bot` | 仅当群内机器人数量不超过 1 个时才允许绕过（默认）。 |
+| `always` | 已授权控制命令始终可绕过 `@` 校验。 |
+
+说明：
+- 仅对群聊中的“已授权控制命令”生效。
+- 同一条消息里如果显式 `@` 了任意用户，则不会触发命令免 `@`。
+- 私聊场景不受该配置影响。
+
+#### 群聊免 @ 行为（`requireMention: false`）
+
+当 `requireMention: false` 时，插件对“未 @ 的群消息”采用安全默认策略：
+
+| `allowMentionlessInMultiBotGroup` | 未 @ 群消息行为 |
+|-----------------------------------|----------------|
+| `false`（默认） | 仅当群里机器人数量不超过 1 个时处理；多 bot 群仍要求显式 `@bot`。 |
+| `true` | 即使在多 bot 群也处理未 @ 消息（仅建议在可接受重复触发风险时启用）。 |
+
+重要说明：
+- 要接收未 @ 的群消息，必须申请并通过 `im:message.group_msg`，且该权限是飞书**敏感权限**。
+- 若未通过该权限，飞书通常只会推送 `@bot` 群消息（`im:message.group_at_msg:readonly`）。
+
+#### 连接模式
+
+支持两种从飞书接收事件的连接模式：
+
+| 模式 | 说明 |
+|------|------|
+| `websocket` | （默认，推荐）长连接 WebSocket 模式。无需公网地址，可在 NAT/防火墙后使用。适合本地开发和大部分部署场景。 |
+| `webhook` | HTTP 服务器接收事件回调。需要公网可访问的 URL。适合通过反向代理（如 Nginx）部署的服务器环境。 |
+
+**WebSocket 模式**（默认，无需额外配置）：
+
+```yaml
+channels:
+  feishu:
+    connectionMode: "websocket"  # 或直接省略此行
+```
+
+飞书控制台：事件与回调 → 选择 **使用长连接接收事件**。
+
+**Webhook 模式**：
+
+```yaml
+channels:
+  feishu:
+    connectionMode: "webhook"
+    webhookPort: 3000               # HTTP 服务端口（默认: 3000）
+    webhookPath: "/feishu/events"   # 事件回调路径（默认: "/feishu/events"）
+    encryptKey: "your_encrypt_key"           # 飞书控制台 → 事件与回调 → Encrypt Key
+    verificationToken: "your_verify_token"   # 飞书控制台 → 事件与回调 → Verification Token
+```
+
+飞书控制台：事件与回调 → 选择 **使用请求地址接收事件** → 填入请求地址：
+
+```
+https://your-domain.com/feishu/events
+```
+
+> **提示：** 请求地址必须是 HTTPS 且公网可访问。本地开发时，可使用 [ngrok](https://ngrok.com) 等工具创建隧道：`ngrok http 3000`，然后使用生成的地址。
+
+#### 渲染模式
+
+| 模式 | 说明 |
+|------|------|
+| `auto` | （默认）自动检测：有代码块或表格时用卡片，否则纯文本 |
+| `raw` | 始终纯文本，表格转为 ASCII |
+| `card` | 始终使用卡片，支持语法高亮、表格、链接等 |
+
+#### 群管理限制 ⚠️
+
+> **重要提示：** `delete_chat` 需要机器人是该群的**群主**。如果机器人是以成员身份加入现有群聊（非群主），则无法解散该群聊。
+>
+> 如需解散机器人不拥有的群聊：
+> 1. **群主**将群主权限转让给机器人，或
+> 2. 由群主直接在飞书客户端解散群聊。
+
+#### 动态 Agent 创建（多用户 Workspace 隔离）
+
+启用后，每个私聊用户会自动获得独立的 agent 实例和专属 workspace。这提供完整的隔离，包括独立的对话历史、记忆（MEMORY.md）和工作区文件。
+
+```yaml
+channels:
+  feishu:
+    dmPolicy: "open"
+    allowFrom: ["*"]
+    dynamicAgentCreation:
+      enabled: true
+      # workspace 目录模板 ({userId} = OpenID, {agentId} = 生成的 agent ID)
+      workspaceTemplate: "~/workspaces/feishu-{agentId}"
+      # agent 配置目录模板
+      agentDirTemplate: "~/.openclaw/agents/{agentId}/agent"
+      # 可选：限制动态 agent 总数
+      maxAgents: 100
+
+session:
+  # 同时设置 dmScope 以隔离对话历史
+  dmScope: "per-peer"
+```
+
+| 选项 | 说明 |
+|------|------|
+| `enabled` | 是否为私聊用户启用动态 agent 创建 |
+| `workspaceTemplate` | workspace 路径模板，支持 `{userId}`（OpenID）和 `{agentId}`（= `feishu-{openId}`）|
+| `agentDirTemplate` | agent 目录路径模板 |
+| `maxAgents` | 可选，限制动态 agent 的最大数量 |
+
+**工作原理：**
+1. 当新用户发送私聊时，系统在 `openclaw.json` 中创建新的 agent 条目
+2. 创建 binding 将该用户的私聊路由到专属 agent
+3. 自动创建 workspace 和 agent 目录
+4. 该用户后续的消息都会路由到其隔离的 agent
+
+**与 `dmScope: "per-peer"` 的区别：**
+- `dmScope: "per-peer"` 仅隔离对话历史
+- `dynamicAgentCreation` 提供完整隔离（workspace、记忆、身份、工具）
+
+### 功能
+
+- WebSocket 和 Webhook 连接模式
+- 私聊和群聊
+- 消息回复和引用上下文
+- **入站媒体支持**：AI 可以看到图片、读取文件（PDF、Excel 等）、处理富文本中的嵌入图片
+- 图片和文件上传（出站）
+- 输入指示器（通过表情回复实现）
+- 私聊配对审批流程
+- 用户和群组目录查询
+- **卡片渲染模式**：支持语法高亮的 Markdown 渲染
+- **文档工具**：读取、创建、用 Markdown 写入飞书文档（表格因 API 限制不支持）
+- **知识库工具**：浏览知识库、列出空间、获取节点详情、搜索、创建/移动/重命名节点
+- **云空间工具**：列出文件夹、获取文件信息、创建文件夹、移动/删除文件
+- **多维表格工具**：支持多维表格字段与记录的读取/创建/更新/删除，支持 `/base/` 和 `/wiki/` 两种链接格式
+- **任务工具**：基于 Task v2 API 支持任务创建、获取详情、更新和删除
+- **群聊工具**：读写群公告、创建群聊、添加成员、检查机器人是否在群内、删除群聊（`feishu_chat`）
+- **加急通知工具**：发送应用内加急（buzz）、短信、语音电话加急通知（`feishu_urgent`）
+- **消息工具**：读取单条消息或列出聊天历史记录，支持时间范围和分页（`feishu_message`）
+- **表情工具**：添加、删除、列出消息上的表情回复（`feishu_reaction`）
+- **@ 转发功能**：在消息中 @ 某人，机器人的回复会自动 @ 该用户
+- **权限错误提示**：当机器人遇到飞书 API 权限错误时，会自动通知用户并提供权限授权链接
+- **动态 Agent 创建**：每个私聊用户可拥有独立的 agent 实例和专属 workspace（可选）
+
+#### @ 转发功能
+
+如果你希望机器人的回复中 @ 某人，只需在你的消息中 @ 他们：
+
+- **私聊**：`@张三 跟他问好` → 机器人回复 `@张三 你好！`
+- **群聊**：`@机器人 @张三 跟他问好` → 机器人回复 `@张三 你好！`
+
+机器人会自动检测消息中的 @ 并在回复时带上。无需额外权限。
+
+### 常见问题
+
+#### 机器人收不到消息
+
+检查以下配置：
+1. 是否配置了 **事件订阅**？（见上方事件订阅章节）
+2. 事件订阅方式是否与 `connectionMode` 匹配？
+   - `websocket` → 飞书控制台选择 **使用长连接接收事件**
+   - `webhook` → 飞书控制台选择 **使用请求地址接收事件**（URL 必须可访问）
+3. 是否添加了 `im.message.receive_v1` 事件？
+4. 相关权限是否已申请并审核通过？
+5. 如果使用 webhook 模式：服务是否正在运行？URL 是否公网可访问？
+
+#### 已配置 `requireMention: false`，群里仍然必须 @
+
+请重点检查：
+1. 是否已申请并审核通过 `im:message.group_msg`（敏感权限，接收未 @ 群消息必需）
+2. 群里若有多个 bot，是否显式设置了 `allowMentionlessInMultiBotGroup: true`
+3. `requireMention: false` 是否配置在当前生效的账号/群配置上
+
+#### 返回消息时 403 错误
+
+确保已申请 `im:message:send_as_bot` 权限，并且权限已审核通过。
+
+#### 如何清理历史会话 / 开启新对话
+
+在聊天中发送 `/new` 命令即可开启新对话。
+
+#### 消息为什么不是流式输出
+
+飞书 API 有请求频率限制，流式更新消息很容易触发限流。当前采用完整回复后一次性发送的方式，以保证稳定性。
+
+#### 在飞书里找不到机器人
+
+1. 确保应用已发布（至少发布到测试版本）
+2. 在飞书搜索框中搜索机器人名称
+3. 检查应用可用范围是否包含你的账号
+
+---
+
+## License
+
+MIT

@@ -5,7 +5,7 @@ const defaultSteps = [
   'envCheck',
   'install',
   'apiKeyGuide',
-  'telegramGuide',
+  'cloudGuide',
   'config',
   'done'
 ]
@@ -16,7 +16,7 @@ const windowsSteps = [
   'wslSetup',
   'install',
   'apiKeyGuide',
-  'telegramGuide',
+  'cloudGuide',
   'config',
   'done'
 ]
