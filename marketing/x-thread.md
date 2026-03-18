@@ -10,11 +10,11 @@ I built a one-click installer for OpenClaw AI agent.
 
 No terminal. No npm. No config files.
 
-Download → Run → Enter API key. Done.
+Download -> Run -> Enter API key. Done.
 
-🔗 github.com/ybgwon96/easyclaw
+Link: github.com/SushangLi/moclaw
 
-🧵 Here's why I built it and what I learned ↓
+Here's why I built it and what I learned ->
 
 ---
 
@@ -35,7 +35,7 @@ I kept seeing people give up at step 2.
 
 **Tweet 3 (Solution)**
 
-So I built EasyClaw — a desktop app that handles everything.
+So I built MoClaw, a desktop app that handles everything.
 
 It auto-detects your environment, installs dependencies, configures your AI provider (Anthropic / Gemini / OpenAI / MiniMax / GLM), and sets up Telegram.
 
@@ -56,12 +56,12 @@ I built a state machine that saves your progress and resumes after reboot. IPv6 
 **Tweet 5 (Stack)**
 
 Tech stack:
-• Electron + electron-vite
-• React 19 + Tailwind CSS 4
-• TypeScript
-• GitHub Actions CI/CD
-• Apple Notarization for macOS
-• i18n (EN/KO/JA/ZH)
+- Electron + electron-vite
+- React 19 + Tailwind CSS 4
+- TypeScript
+- GitHub Actions CI/CD
+- Apple Notarization for macOS
+- i18n (EN/KO/JA/ZH)
 
 MIT licensed. Fully open source.
 
@@ -71,12 +71,12 @@ MIT licensed. Fully open source.
 
 Try it out:
 
-🍎 macOS: easyclaw.kr
-🪟 Windows: easyclaw.kr
+macOS: moclaw.kr
+Windows: moclaw.kr
 
-⭐ Star on GitHub: github.com/ybgwon96/easyclaw
+Star on GitHub: github.com/SushangLi/moclaw
 
-Feedback, issues, PRs — all welcome!
+Feedback, issues, PRs all welcome.
 
 #OpenClaw #AIAgent #OpenSource #Telegram #Electron
 

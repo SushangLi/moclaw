@@ -1,6 +1,6 @@
-# Contributing to EasyClaw
+# Contributing to MoClaw
 
-Thank you for your interest in contributing to EasyClaw! This guide will help you get started.
+Thank you for your interest in contributing to MoClaw! This guide will help you get started.
 
 ## Development Setup
 
@@ -14,8 +14,8 @@ Thank you for your interest in contributing to EasyClaw! This guide will help yo
 
 ```bash
 # Clone the repository
-git clone https://github.com/ybgwon96/easyclaw.git
-cd easyclaw
+git clone https://github.com/SushangLi/moclaw.git
+cd moclaw
 
 # Install dependencies
 npm install
@@ -36,7 +36,7 @@ npm run dev
 
 ## Architecture
 
-EasyClaw follows the standard Electron 3-layer architecture:
+MoClaw follows the standard Electron 3-layer architecture:
 
 ```
 src/
@@ -55,7 +55,7 @@ When adding a new IPC channel, you must update three files:
 
 ### Reporting Bugs
 
-Use the [bug report template](https://github.com/ybgwon96/easyclaw/issues/new?template=bug_report.md) to file a bug. Include:
+Use the [bug report template](https://github.com/SushangLi/moclaw/issues/new?template=bug_report.md) to file a bug. Include:
 
 - Steps to reproduce
 - Expected vs actual behavior
@@ -63,7 +63,7 @@ Use the [bug report template](https://github.com/ybgwon96/easyclaw/issues/new?te
 
 ### Suggesting Features
 
-Use the [feature request template](https://github.com/ybgwon96/easyclaw/issues/new?template=feature_request.md).
+Use the [feature request template](https://github.com/SushangLi/moclaw/issues/new?template=feature_request.md).
 
 ### Submitting Pull Requests
 
@@ -90,8 +90,8 @@ Use the [feature request template](https://github.com/ybgwon96/easyclaw/issues/n
 
 ## Need Help?
 
-- Open a [GitHub Discussion](https://github.com/ybgwon96/easyclaw/discussions)
-- Check existing [issues](https://github.com/ybgwon96/easyclaw/issues)
+- Open a [GitHub Discussion](https://github.com/SushangLi/moclaw/discussions)
+- Check existing [issues](https://github.com/SushangLi/moclaw/issues)
 
 ## License
 

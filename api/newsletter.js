@@ -1,4 +1,4 @@
-const ALLOWED_ORIGINS = ['https://easyclaw.kr', 'https://www.easyclaw.kr']
+const ALLOWED_ORIGINS = ['https://moclaw.kr', 'https://www.moclaw.kr']
 
 export default async function handler(req, res) {
   const origin = req.headers.origin

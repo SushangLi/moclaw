@@ -8,7 +8,7 @@ var PRODUCTS = {
     accentLight: '#fdba74',
     accentGlow: 'rgba(249, 115, 22, 0.35)',
     accentDark: '#ea580c',
-    github: 'ybgwon96/moclaw',
+    github: 'SushangLi/moclaw',
     dmg: 'moclaw.dmg',
     exe: 'moclaw-setup.exe',
     iconTemplate: 'icon-claw',

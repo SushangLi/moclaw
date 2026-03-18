@@ -1,8 +1,8 @@
 const translations = {
   ko: {
-    'meta.title': 'EasyClaw — OpenClaw 원클릭 설치 프로그램',
+    'meta.title': 'MoClaw — OpenClaw 원클릭 설치 프로그램',
     'meta.description':
-      'EasyClaw로 OpenClaw AI 에이전트를 원클릭 설치하세요. Windows & macOS 지원.',
+      'MoClaw로 OpenClaw AI 에이전트를 원클릭 설치하세요. Windows & macOS 지원.',
     'nav.download': '다운로드',
     'hero.tagline':
       '복잡한 설정은 잊으세요.<br /><strong>OpenClaw AI 에이전트</strong>를 원클릭으로 설치하고 바로 대화하세요.',
@@ -14,7 +14,7 @@ const translations = {
     'hero.starGithub': 'Star on GitHub',
     'hero.openChat': '오픈채팅방 참여하기',
     'features.label': 'Features',
-    'features.title': '왜 EasyClaw인가요?',
+    'features.title': '왜 MoClaw인가요?',
     'features.sub': '설치부터 실행까지, 모든 과정을 간단하게.',
     'features.oneclick.title': '원클릭 설치',
     'features.oneclick.desc':
@@ -29,7 +29,7 @@ const translations = {
     'steps.download.title': '다운로드',
     'steps.download.desc': 'OS에 맞는 설치 파일을<br />한 번에 다운로드',
     'steps.install.title': '설치 & 설정',
-    'steps.install.desc': 'EasyClaw가 환경을 감지하고<br />필요한 것만 자동 설치',
+    'steps.install.desc': 'MoClaw가 환경을 감지하고<br />필요한 것만 자동 설치',
     'steps.chat.title': '대화 시작',
     'steps.chat.desc': 'API 키를 입력하면<br />바로 AI 에이전트 사용 가능',
     'cta.title': '지금 바로 시작하세요',
@@ -78,14 +78,14 @@ const translations = {
     'crossBanner.code.title': 'EasyCode',
     'crossBanner.code.desc': 'Claude Code도 원클릭으로 설치해보세요',
     'crossBanner.code.btn': 'EasyCode 보기',
-    'crossBanner.claw.title': 'EasyClaw',
+    'crossBanner.claw.title': 'MoClaw',
     'crossBanner.claw.desc': 'OpenClaw AI 에이전트도 원클릭으로 설치해보세요',
-    'crossBanner.claw.btn': 'EasyClaw 보기'
+    'crossBanner.claw.btn': 'MoClaw 보기'
   },
   en: {
-    'meta.title': 'EasyClaw — One-Click OpenClaw Installer',
+    'meta.title': 'MoClaw — One-Click OpenClaw Installer',
     'meta.description':
-      'Install the OpenClaw AI agent with one click using EasyClaw. Supports Windows & macOS.',
+      'Install the OpenClaw AI agent with one click using MoClaw. Supports Windows & macOS.',
     'nav.download': 'Download',
     'hero.tagline':
       'Forget complicated setup.<br /><strong>Install the OpenClaw AI agent</strong> with one click and start chatting right away.',
@@ -97,7 +97,7 @@ const translations = {
     'hero.starGithub': 'Star on GitHub',
     'hero.openChat': 'Join Open Chat',
     'features.label': 'Features',
-    'features.title': 'Why EasyClaw?',
+    'features.title': 'Why MoClaw?',
     'features.sub': 'From installation to launch, everything made simple.',
     'features.oneclick.title': 'One-Click Install',
     'features.oneclick.desc':
@@ -112,7 +112,7 @@ const translations = {
     'steps.download.title': 'Download',
     'steps.download.desc': 'Download the installer<br />for your OS',
     'steps.install.title': 'Install & Configure',
-    'steps.install.desc': 'EasyClaw detects your environment<br />and auto-installs what you need',
+    'steps.install.desc': 'MoClaw detects your environment<br />and auto-installs what you need',
     'steps.chat.title': 'Start Chatting',
     'steps.chat.desc': 'Enter your API key<br />and start using the AI agent',
     'cta.title': 'Get Started Now',
@@ -163,14 +163,14 @@ const translations = {
     'crossBanner.code.title': 'EasyCode',
     'crossBanner.code.desc': 'Install Claude Code with one click too',
     'crossBanner.code.btn': 'View EasyCode',
-    'crossBanner.claw.title': 'EasyClaw',
+    'crossBanner.claw.title': 'MoClaw',
     'crossBanner.claw.desc': 'Install OpenClaw AI agent with one click too',
-    'crossBanner.claw.btn': 'View EasyClaw'
+    'crossBanner.claw.btn': 'View MoClaw'
   },
   ja: {
-    'meta.title': 'EasyClaw — OpenClaw ワンクリックインストーラー',
+    'meta.title': 'MoClaw — OpenClaw ワンクリックインストーラー',
     'meta.description':
-      'EasyClawでOpenClaw AIエージェントをワンクリックインストール。Windows & macOS対応。',
+      'MoClawでOpenClaw AIエージェントをワンクリックインストール。Windows & macOS対応。',
     'nav.download': 'ダウンロード',
     'hero.tagline':
       '複雑な設定は忘れてください。<br /><strong>OpenClaw AIエージェント</strong>をワンクリックでインストールしてすぐに会話を始めましょう。',
@@ -182,7 +182,7 @@ const translations = {
     'hero.starGithub': 'Star on GitHub',
     'hero.openChat': 'オープンチャットに参加',
     'features.label': 'Features',
-    'features.title': 'なぜEasyClawなのか？',
+    'features.title': 'なぜMoClawなのか？',
     'features.sub': 'インストールから実行まで、すべてをシンプルに。',
     'features.oneclick.title': 'ワンクリックインストール',
     'features.oneclick.desc':
@@ -198,7 +198,7 @@ const translations = {
     'steps.download.title': 'ダウンロード',
     'steps.download.desc': 'お使いのOSに合った<br />インストーラーをダウンロード',
     'steps.install.title': 'インストール＆設定',
-    'steps.install.desc': 'EasyClawが環境を検出し<br />必要なものだけ自動インストール',
+    'steps.install.desc': 'MoClawが環境を検出し<br />必要なものだけ自動インストール',
     'steps.chat.title': '会話開始',
     'steps.chat.desc': 'APIキーを入力すれば<br />すぐにAIエージェントが使えます',
     'cta.title': '今すぐ始めましょう',
@@ -247,13 +247,13 @@ const translations = {
     'crossBanner.code.title': 'EasyCode',
     'crossBanner.code.desc': 'Claude Codeもワンクリックでインストール',
     'crossBanner.code.btn': 'EasyCodeを見る',
-    'crossBanner.claw.title': 'EasyClaw',
+    'crossBanner.claw.title': 'MoClaw',
     'crossBanner.claw.desc': 'OpenClaw AIエージェントもワンクリックでインストール',
-    'crossBanner.claw.btn': 'EasyClawを見る'
+    'crossBanner.claw.btn': 'MoClawを見る'
   },
   zh: {
-    'meta.title': 'EasyClaw — OpenClaw 一键安装程序',
-    'meta.description': '使用EasyClaw一键安装OpenClaw AI代理。支持Windows和macOS。',
+    'meta.title': 'MoClaw — OpenClaw 一键安装程序',
+    'meta.description': '使用MoClaw一键安装OpenClaw AI代理。支持Windows和macOS。',
     'nav.download': '下载',
     'hero.tagline':
       '忘掉复杂的配置吧。<br /><strong>一键安装OpenClaw AI代理</strong>，立即开始对话。',
@@ -265,7 +265,7 @@ const translations = {
     'hero.starGithub': 'Star on GitHub',
     'hero.openChat': '加入开放聊天',
     'features.label': 'Features',
-    'features.title': '为什么选择EasyClaw？',
+    'features.title': '为什么选择MoClaw？',
     'features.sub': '从安装到运行，一切从简。',
     'features.oneclick.title': '一键安装',
     'features.oneclick.desc': '自动检测并安装所需的所有环境——WSL、Node.js和OpenClaw。',
@@ -279,7 +279,7 @@ const translations = {
     'steps.download.title': '下载',
     'steps.download.desc': '下载适合您操作系统的<br />安装文件',
     'steps.install.title': '安装和配置',
-    'steps.install.desc': 'EasyClaw检测环境<br />自动安装所需组件',
+    'steps.install.desc': 'MoClaw检测环境<br />自动安装所需组件',
     'steps.chat.title': '开始对话',
     'steps.chat.desc': '输入API密钥<br />即可使用AI代理',
     'cta.title': '立即开始',
@@ -325,9 +325,9 @@ const translations = {
     'crossBanner.code.title': 'EasyCode',
     'crossBanner.code.desc': '也来一键安装Claude Code吧',
     'crossBanner.code.btn': '查看EasyCode',
-    'crossBanner.claw.title': 'EasyClaw',
+    'crossBanner.claw.title': 'MoClaw',
     'crossBanner.claw.desc': '也来一键安装OpenClaw AI代理吧',
-    'crossBanner.claw.btn': '查看EasyClaw'
+    'crossBanner.claw.btn': '查看MoClaw'
   }
 }
 

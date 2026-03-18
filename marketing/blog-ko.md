@@ -8,13 +8,13 @@
 
 [OpenClaw](https://github.com/openclaw/openclaw)는 텔레그램을 통해 AI와 대화할 수 있는 오픈소스 AI 에이전트입니다. 강력한 도구이지만, 설치 과정에서 Node.js 설치, npm 명령어 실행, 설정 파일 편집 등 여러 단계를 거쳐야 합니다.
 
-커뮤니티에서 "설치가 너무 복잡해서 포기했다"는 이야기를 자주 접했고, 이 문제를 해결하고 싶어서 **EasyClaw**를 만들었습니다.
+커뮤니티에서 "설치가 너무 복잡해서 포기했다"는 이야기를 자주 접했고, 이 문제를 해결하고 싶어서 **MoClaw**를 만들었습니다.
 
-## EasyClaw란?
+## MoClaw란?
 
 **다운로드 → 실행 → API 키 입력**, 3단계면 OpenClaw 설정이 완료됩니다.
 
-EasyClaw가 자동으로 처리하는 것들:
+MoClaw가 자동으로 처리하는 것들:
 
 - 환경 자동 감지 (Node.js 버전, Windows WSL 상태 등)
 - 필요한 의존성 설치
@@ -61,10 +61,10 @@ Electron 앱에서 WSL 설치를 자동화하는 건 예상보다 까다로웠�
 
 ## 다운로드
 
-- **macOS**: [easy-claw.dmg](https://github.com/ybgwon96/easyclaw/releases/latest/download/easy-claw.dmg)
-- **Windows**: [easy-claw-setup.exe](https://github.com/ybgwon96/easyclaw/releases/latest/download/easy-claw-setup.exe)
-- **GitHub**: [github.com/ybgwon96/easyclaw](https://github.com/ybgwon96/easyclaw)
-- **웹사이트**: [easyclaw.kr](https://easyclaw.kr)
+- **macOS**: [moclaw.dmg](https://github.com/SushangLi/moclaw/releases/latest/download/moclaw.dmg)
+- **Windows**: [moclaw-setup.exe](https://github.com/SushangLi/moclaw/releases/latest/download/moclaw-setup.exe)
+- **GitHub**: [github.com/SushangLi/moclaw](https://github.com/SushangLi/moclaw)
+- **웹사이트**: [moclaw.kr](https://moclaw.kr)
 
 MIT 라이선스 오픈소스입니다. Issue나 PR 환영합니다!
 

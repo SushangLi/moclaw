@@ -12,7 +12,7 @@ If you discover a security vulnerability, please report it responsibly.
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, please email us at **easyclaw@proton.me** with:
+Instead, please email us at **moclaw@proton.me** with:
 
 - Description of the vulnerability
 - Steps to reproduce
